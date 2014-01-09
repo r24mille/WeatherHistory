@@ -35,10 +35,10 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2003, Calendar.JANUARY, 5, 0, 0, 0);
+		startCal.set(2005, Calendar.JUNE, 14, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2012, Calendar.DECEMBER, 31, 23, 59, 59);
+		endCal.set(2005, Calendar.DECEMBER, 31, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
 		List<IesoDemand> demands = iesoDemandDAO.getDemandForRange(
 				startCal.getTime(), endCal.getTime());
