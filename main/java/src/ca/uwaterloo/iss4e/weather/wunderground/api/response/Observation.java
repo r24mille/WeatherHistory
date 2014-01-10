@@ -1,8 +1,8 @@
 package ca.uwaterloo.iss4e.weather.wunderground.api.response;
 
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,8 +15,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Observation {
-	private Date timestamp;
+	private Date date;
 	private WundergroundDate wundergroundDate;
+	private WundergroundDate wundergroundUtcDate;
 	private double tempMetric;
 	private double tempImperial;
 	private double dewpointMetric;
@@ -48,30 +49,23 @@ public class Observation {
 	private int tornado;
 
 	@JsonIgnore
-	public Date getJavaDateFromWundergroundDate() {
-		int year = this.getWundergroundDate().getYear();
-		int calMonth = (this.getWundergroundDate().getMonth() - 1);
-		int calDate = this.getWundergroundDate().getDay();
-		int hourOfDay = this.getWundergroundDate().getHour();
-		int minute = this.getWundergroundDate().getMinute();
-		int second = 0; // Default to 0, since weather is not to that resolution
-		TimeZone zone = TimeZone.getTimeZone(this.getWundergroundDate()
-				.getTzname());
+	public Date getJavaDateFromWundergroundDate() throws ParseException {
+		SimpleDateFormat prettyFormat = new SimpleDateFormat(
+				WundergroundDate.PRETTY_DATE_PATTERN);
+		Date localDate = prettyFormat.parse(this.getWundergroundDate()
+				.getPretty());
 
-		Calendar cal = Calendar.getInstance(zone);
-		cal.set(year, calMonth, calDate, hourOfDay, minute, second);
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal.getTime();
+		return localDate;
 	}
 
 	@JsonIgnore
-	public Date getTimestamp() {
-		return timestamp;
+	public Date getDate() {
+		return date;
 	}
 
 	@JsonIgnore
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	@JsonProperty("date")
@@ -82,6 +76,16 @@ public class Observation {
 	@JsonProperty("date")
 	public void setWundergroundDate(WundergroundDate wundergroundDate) {
 		this.wundergroundDate = wundergroundDate;
+	}
+
+	@JsonProperty("utcdate")
+	public WundergroundDate getWundergroundUtcDate() {
+		return wundergroundUtcDate;
+	}
+
+	@JsonProperty("utcdate")
+	public void setWundergroundUtcDate(WundergroundDate wundergroundUtcDate) {
+		this.wundergroundUtcDate = wundergroundUtcDate;
 	}
 
 	@JsonProperty("tempm")

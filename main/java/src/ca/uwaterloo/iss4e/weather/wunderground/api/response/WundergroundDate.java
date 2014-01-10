@@ -3,6 +3,8 @@ package ca.uwaterloo.iss4e.weather.wunderground.api.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WundergroundDate {
+	public static final String PRETTY_DATE_PATTERN = "h:mm a z 'on' MMM dd, yyyy";
+	
 	private String pretty;
 	private int year;
 	private int month;

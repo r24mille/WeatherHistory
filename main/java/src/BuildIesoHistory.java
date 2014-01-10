@@ -35,15 +35,16 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2005, Calendar.JUNE, 14, 0, 0, 0);
+		startCal.set(2003, Calendar.OCTOBER, 26, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2005, Calendar.DECEMBER, 31, 23, 59, 59);
+		endCal.set(2003, Calendar.OCTOBER, 26, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
 		List<IesoDemand> demands = iesoDemandDAO.getDemandForRange(
 				startCal.getTime(), endCal.getTime());
 		TreeSet<String> dateStrings = new TreeSet<String>();
 		for (IesoDemand iesoDemand : demands) {
+			System.out.println("IESO Demand Timestamp: " + iesoDemand.getTimestamp());
 			dateStrings.add(HistoryDate.formatDateString(iesoDemand
 					.getTimestamp()));
 		}
@@ -86,10 +87,11 @@ public class BuildIesoHistory {
 					+ dateString + "/q/" + country + "/" + city + ".json");
 			for (Observation observation : historyResponse.getHistory()
 					.getObservations()) {
-				observation.setTimestamp(observation
+				observation.setDate(observation
 						.getJavaDateFromWundergroundDate());
-				wundergroundObservationDAO.insertObservation(locationId,
-						observation);
+				System.out.println("WUnderground Date: " + observation.getDate());
+				//wundergroundObservationDAO.insertObservation(locationId,
+				//		observation);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
