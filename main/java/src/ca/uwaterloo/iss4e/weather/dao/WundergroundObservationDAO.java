@@ -29,7 +29,8 @@ public class WundergroundObservationDAO {
 		df.setTimeZone(TimeZone.getTimeZone(OBSERVATION_STORAGE_TIMEZONE));
 		String dateStringWithStandardTime = df.format(dateWithDST);
 
-		String sql = "insert into wunderground_observation (location_id, observation_timestamp, observation_datetime, observation_timezone, "
+		String sql = "insert into wunderground_observation (location_id, observation_datetime_dst, "
+				+ "observation_datetime_standard, observation_timezone, "
 				+ "temp_metric, temp_imperial, dewpoint_metric, dewpoint_imperial, humidity, "
 				+ "windspeed_metric, windspeed_imperial, wind_gust_metric, wind_gust_imperial, "
 				+ "wind_direction_degrees, wind_direction_description, visibility_metric, "
@@ -75,11 +76,11 @@ public class WundergroundObservationDAO {
 	}
 
 	public List<Observation> getObservationRange(Date startDate, Date endDate) {
-		String sql = "select  concat(date_format(observation_datetime, '%Y-%m-%d %H:%i:%s'), ' ', observation_timezone) as observation_datetime_with_timezone, "
+		String sql = "select concat(date_format(observation_datetime_standard, '%Y-%m-%d %H:%i:%s'), ' ', observation_timezone) as observation_datetime_with_timezone, "
 				+ "wunderground_observation.* "
 				+ "from wunderground_observation "
-				+ "where observation_datetime >= ? and observation_datetime <= ? "
-				+ "order by observation_datetime asc";
+				+ "where observation_datetime_standard >= ? and observation_datetime_standard <= ? "
+				+ "order by observation_datetime_standard asc";
 
 		JdbcTemplate template = new JdbcTemplate(weathertablesDataSource);
 		List<Observation> observations = template.query(sql, new Object[] {

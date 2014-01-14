@@ -23,6 +23,7 @@ public class WundergroundObservationMapper implements RowMapper<Observation> {
 					.getString("observation_datetime_with_timezone");
 			observation.setDate(datetimeWithTimezoneFormat
 					.parse(observationDatetimeString));
+			System.out.println(observation.getDate());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
