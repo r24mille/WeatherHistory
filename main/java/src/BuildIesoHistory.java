@@ -35,16 +35,15 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2003, Calendar.OCTOBER, 26, 0, 0, 0);
+		startCal.set(2010, Calendar.OCTOBER, 28, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2003, Calendar.OCTOBER, 26, 23, 59, 59);
+		endCal.set(2011, Calendar.DECEMBER, 31, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
 		List<IesoDemand> demands = iesoDemandDAO.getDemandForRange(
 				startCal.getTime(), endCal.getTime());
 		TreeSet<String> dateStrings = new TreeSet<String>();
 		for (IesoDemand iesoDemand : demands) {
-			System.out.println("IESO Demand Timestamp: " + iesoDemand.getTimestamp());
 			dateStrings.add(HistoryDate.formatDateString(iesoDemand
 					.getTimestamp()));
 		}
@@ -56,16 +55,19 @@ public class BuildIesoHistory {
 			interMinCount++;
 			interDayCount++;
 
-			// Must obey 10 queries per minute, 500 queries per day API key terms-of-use
+			// Must obey 10 queries per minute, 500 queries per day API key
+			// terms-of-use
 			if (interMinCount >= 10) {
-				// The 10 queries will finish fairly quickly. Just wait a minute for simplicity
+				// The 10 queries will finish fairly quickly. Just wait a minute
+				// for simplicity
 				Thread.sleep(60000);
 				interMinCount = 0;
 			}
 			if (interDayCount >= 500) {
 				// 500 queries / 10 query batches = 50 batches
 				// 50 batches * 60 seconds = 3000 seconds for all batches
-				// 86400 seconds - 3000 seconds = 83400 seconds necessary to obey daily limit
+				// 86400 seconds - 3000 seconds = 83400 seconds necessary to
+				// obey daily limit
 				// 83400 seconds = 83400000 milliseconds
 				Thread.sleep(83400000);
 				interDayCount = 0;
@@ -89,9 +91,8 @@ public class BuildIesoHistory {
 					.getObservations()) {
 				observation.setDate(observation
 						.getJavaDateFromWundergroundDate());
-				System.out.println("WUnderground Date: " + observation.getDate());
-				//wundergroundObservationDAO.insertObservation(locationId,
-				//		observation);
+				wundergroundObservationDAO.insertObservation(locationId,
+						observation);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
