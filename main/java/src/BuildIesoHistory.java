@@ -7,7 +7,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.client.RestTemplate;
 
 import ca.uwaterloo.iss4e.demand.dao.ieso.IesoDemandDAO;
-import ca.uwaterloo.iss4e.demand.model.ieso.IesoDemand;
+import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemand;
 import ca.uwaterloo.iss4e.weather.dao.LocationDAO;
 import ca.uwaterloo.iss4e.weather.dao.WundergroundObservationDAO;
 import ca.uwaterloo.iss4e.weather.wunderground.api.response.HistoryResponse;
@@ -35,17 +35,17 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2010, Calendar.OCTOBER, 28, 0, 0, 0);
+		startCal.set(2012, Calendar.FEBRUARY, 10, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2011, Calendar.OCTOBER, 31, 23, 59, 59);
+		endCal.set(2012, Calendar.DECEMBER, 31, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
-		List<IesoDemand> demands = iesoDemandDAO.getDemandForRange(
+		List<ZonalDemand> demands = iesoDemandDAO.getZonalDemandRange(
 				startCal.getTime(), endCal.getTime());
 		TreeSet<String> dateStrings = new TreeSet<String>();
-		for (IesoDemand iesoDemand : demands) {
-			dateStrings.add(HistoryDate.formatDateString(iesoDemand
-					.getTimestamp()));
+		for (ZonalDemand zonalDemand : demands) {
+			dateStrings
+					.add(HistoryDate.formatDateString(zonalDemand.getDate()));
 		}
 
 		int interMinCount = 0;
