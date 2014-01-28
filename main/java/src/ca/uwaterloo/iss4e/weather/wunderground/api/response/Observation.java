@@ -47,6 +47,7 @@ public class Observation {
 	private int hail;
 	private int thunder;
 	private int tornado;
+	private String metar;
 
 	@JsonIgnore
 	public Date getJavaDateFromWundergroundDate() throws ParseException {
@@ -364,4 +365,11 @@ public class Observation {
 		this.tornado = tornado;
 	}
 
+	public String getMetar() {
+		return metar;
+	}
+
+	public void setMetar(String metar) {
+		this.metar = metar;
+	}
 }

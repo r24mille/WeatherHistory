@@ -81,6 +81,7 @@ public class WundergroundObservationMapper implements RowMapper<Observation> {
 		observation.setHail(rs.getInt("wunderground_observation.hail"));
 		observation.setThunder(rs.getInt("wunderground_observation.thunder"));
 		observation.setTornado(rs.getInt("wunderground_observation.tornado"));
+		observation.setMetar(rs.getString("wunderground_observation.metar"));
 
 		return observation;
 	}

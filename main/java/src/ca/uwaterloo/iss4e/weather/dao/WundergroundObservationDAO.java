@@ -37,9 +37,9 @@ public class WundergroundObservationDAO {
 				+ "visibility_imperial, pressure_metric, pressure_imperial, windchill_metric, "
 				+ "windchill_imperial, heat_index_metric, heat_index_imperial, "
 				+ "precipitation_metric, precipitation_imperial, condition_phrase, icon, fog, "
-				+ "rain, snow, hail, thunder, tornado) "
+				+ "rain, snow, hail, thunder, tornado, metar) "
 				+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-				+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		JdbcTemplate template = new JdbcTemplate(weathertablesDataSource);
 		template.update(
@@ -72,7 +72,7 @@ public class WundergroundObservationDAO {
 						observation.getIcon(), observation.getFog(),
 						observation.getRain(), observation.getSnow(),
 						observation.getHail(), observation.getThunder(),
-						observation.getTornado() });
+						observation.getTornado(), observation.getMetar() });
 	}
 
 	public List<Observation> getObservationRange(Date startDate, Date endDate) {

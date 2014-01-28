@@ -26,7 +26,7 @@ public class BuildIesoHistory {
 	static String apiKey = (String) context.getBean("apiKey");
 
 	// Configure these each run
-	static final String city = "Toronto";
+	static final String city = "Kitchener";
 	static final String provinceOrState = "ON";
 	static final String country = "Canada";
 
@@ -35,10 +35,10 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2012, Calendar.FEBRUARY, 10, 0, 0, 0);
+		startCal.set(2004, Calendar.SEPTEMBER, 30, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2012, Calendar.DECEMBER, 31, 23, 59, 59);
+		endCal.set(2004, Calendar.SEPTEMBER, 30, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
 		List<ZonalDemand> demands = iesoDemandDAO.getZonalDemandRange(
 				startCal.getTime(), endCal.getTime());
@@ -91,8 +91,15 @@ public class BuildIesoHistory {
 					.getObservations()) {
 				observation.setDate(observation
 						.getJavaDateFromWundergroundDate());
-				wundergroundObservationDAO.insertObservation(locationId,
-						observation);
+				
+				/* METAR observations are scheduled observations http://www.wunderground.com/metarFAQ.asp
+				 * and should prevent duplicates on the hour from separate stations 
+				 * and unneeded inter-hour observations.
+				 */
+				if (observation.getMetar().startsWith("METAR")) {
+					wundergroundObservationDAO.insertObservation(locationId,
+							observation);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
