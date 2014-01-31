@@ -26,7 +26,7 @@ public class BuildIesoHistory {
 	static String apiKey = (String) context.getBean("apiKey");
 
 	// Configure these each run
-	static final String city = "Kitchener";
+	static final String city = "Toronto";
 	static final String provinceOrState = "ON";
 	static final String country = "Canada";
 
@@ -35,10 +35,10 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2003, Calendar.MAY, 29, 0, 0, 0);
+		startCal.set(2003, Calendar.MAY, 1, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2003, Calendar.MAY, 29, 23, 59, 59);
+		endCal.set(2004, Calendar.OCTOBER, 31, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
 		List<ZonalDemand> demands = iesoDemandDAO.getZonalDemandRange(
 				startCal.getTime(), endCal.getTime());
