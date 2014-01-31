@@ -35,10 +35,10 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2004, Calendar.SEPTEMBER, 30, 0, 0, 0);
+		startCal.set(2003, Calendar.MAY, 29, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2004, Calendar.SEPTEMBER, 30, 23, 59, 59);
+		endCal.set(2003, Calendar.MAY, 29, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
 		List<ZonalDemand> demands = iesoDemandDAO.getZonalDemandRange(
 				startCal.getTime(), endCal.getTime());
@@ -82,7 +82,7 @@ public class BuildIesoHistory {
 		try {
 			HistoryResponse historyResponse = restTemplate.getForObject(
 					"http://api.wunderground.com/api/" + apiKey + "/history_"
-							+ dateString + "/q/Canada/Toronto.json",
+							+ dateString + "/q/" + country + "/" + city + ".json",
 					HistoryResponse.class);
 			System.out.println("Request URL: "
 					+ "http://api.wunderground.com/api/" + apiKey + "/history_"
