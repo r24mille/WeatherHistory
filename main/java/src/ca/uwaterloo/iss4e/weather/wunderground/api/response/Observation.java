@@ -15,6 +15,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Observation {
+	public static final int HUMIDITY_ERROR_INT = -9999;
+	public static final String HUMIDITY_ERROR_STRING = "N/A";
+
 	private Date date;
 	private WundergroundDate wundergroundDate;
 	private WundergroundDate wundergroundUtcDate;
@@ -23,6 +26,7 @@ public class Observation {
 	private double dewpointMetric;
 	private double dewpointImperial;
 	private double humidity;
+	private String humidityAsString;
 	private double windSpeedMetric;
 	private double windSpeedImperial;
 	private double windGustMetric;
@@ -129,14 +133,52 @@ public class Observation {
 		this.dewpointImperial = dewpointImperial;
 	}
 
-	@JsonProperty("hum")
 	public double getHumidity() {
 		return humidity;
 	}
 
-	@JsonProperty("hum")
+	/**
+	 * This setter also sets the value of {@link #setHumidityAsString(String)}
+	 * accordingly.
+	 * 
+	 * @param humidity
+	 */
 	public void setHumidity(double humidity) {
 		this.humidity = humidity;
+		if (humidity >= 0) {
+			this.humidityAsString = String.valueOf(humidity);
+		} else {
+			this.humidityAsString = HUMIDITY_ERROR_STRING;
+		}
+	}
+
+	@JsonProperty("hum")
+	public String getHumidityAsString() {
+		return humidityAsString;
+	}
+
+	/**
+	 * <p>
+	 * The "hum" JSON element is occassionally returned as "N/A" which triggers
+	 * com.fasterxml.jackson.databind.exc.InvalidFormatException. It may be more
+	 * proper to catch that exception elsewhere but it's easier and not terribly
+	 * wrong to handle it as a String here.
+	 * </p>
+	 * <p>
+	 * This setter also sets the value of {@link #setHumidity(double)}
+	 * accordingly.
+	 * </p>
+	 * 
+	 * @param humidityAsString
+	 */
+	@JsonProperty("hum")
+	public void setHumidityAsString(String humidityAsString) {
+		this.humidityAsString = humidityAsString;
+		try {
+			this.humidity = Double.parseDouble(this.humidityAsString);
+		} catch (NumberFormatException nfe) {
+			this.humidity = HUMIDITY_ERROR_INT;
+		}
 	}
 
 	@JsonProperty("wspdm")
