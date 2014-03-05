@@ -26,7 +26,7 @@ public class BuildIesoHistory {
 	static String apiKey = (String) context.getBean("apiKey");
 
 	// Configure these each run
-	static final String city = "Toronto";
+	static final String city = "Niagara Falls";
 	static final String provinceOrState = "ON";
 	static final String country = "Canada";
 
@@ -35,10 +35,10 @@ public class BuildIesoHistory {
 				country);
 
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2003, Calendar.MAY, 1, 0, 0, 0);
+		startCal.set(2003, Calendar.JANUARY, 1, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
-		endCal.set(2004, Calendar.OCTOBER, 31, 23, 59, 59);
+		endCal.set(2013, Calendar.DECEMBER, 31, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
 		List<ZonalDemand> demands = iesoDemandDAO.getZonalDemandRange(
 				startCal.getTime(), endCal.getTime());
@@ -63,15 +63,15 @@ public class BuildIesoHistory {
 				Thread.sleep(60000);
 				interMinCount = 0;
 			}
-			if (interDayCount >= 500) {
-				// 500 queries / 10 query batches = 50 batches
-				// 50 batches * 60 seconds = 3000 seconds for all batches
-				// 86400 seconds - 3000 seconds = 83400 seconds necessary to
-				// obey daily limit
-				// 83400 seconds = 83400000 milliseconds
-				Thread.sleep(83400000);
-				interDayCount = 0;
-			}
+//			if (interDayCount >= 500) {
+//				// 500 queries / 10 query batches = 50 batches
+//				// 50 batches * 60 seconds = 3000 seconds for all batches
+//				// 86400 seconds - 3000 seconds = 83400 seconds necessary to
+//				// obey daily limit
+//				// 83400 seconds = 83400000 milliseconds
+//				Thread.sleep(83400000);
+//				interDayCount = 0;
+//			}
 		}
 	}
 
@@ -79,14 +79,15 @@ public class BuildIesoHistory {
 			String dateString, int locationId) {
 		RestTemplate restTemplate = new RestTemplate();
 
+		String cityForURL = city.replaceAll(" ", "_");
 		try {
 			HistoryResponse historyResponse = restTemplate.getForObject(
 					"http://api.wunderground.com/api/" + apiKey + "/history_"
-							+ dateString + "/q/" + country + "/" + city + ".json",
+							+ dateString + "/q/" + country + "/" + cityForURL + ".json",
 					HistoryResponse.class);
 			System.out.println("Request URL: "
 					+ "http://api.wunderground.com/api/" + apiKey + "/history_"
-					+ dateString + "/q/" + country + "/" + city + ".json");
+					+ dateString + "/q/" + country + "/" + cityForURL + ".json");
 			for (Observation observation : historyResponse.getHistory()
 					.getObservations()) {
 				observation.setDate(observation
