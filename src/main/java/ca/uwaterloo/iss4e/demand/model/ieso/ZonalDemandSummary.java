@@ -1,29 +1,34 @@
 package ca.uwaterloo.iss4e.demand.model.ieso;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import org.joda.time.DateTime;
 
-public class ZonalDemand {
+public class ZonalDemandSummary {
 	private int estHourNum;
 	private int wallHourNum;
 	private int zonalDemandId;
-	private double demand;
+	private double totalOntarioDemand;
+	private double totalZonesDemand;
+	private double difference;
 	private boolean weekend;
 	private DateTime dateTime;
-	private TransmissionZone transmissionZone;
 	private TimeOfUseRate timeOfUseRate;
 	private TimeOfUseSeason timeOfUseSeason;
+	private HashMap<TransmissionZone, ZonalDemand> zonalDemands;
 
-	public ZonalDemand(int zonalDemandId, int estHourNum, Date dstDate,
-			double demand, String columnName) {
+	public ZonalDemandSummary(int zonalDemandId, int estHourNum, Date dstDate,
+			double totalOntarioDemand, double totalZonesDemand,
+			double difference,
+			HashMap<TransmissionZone, ZonalDemand> zonalDemands) {
 		this.zonalDemandId = zonalDemandId;
 		this.estHourNum = estHourNum;
 		this.dateTime = new DateTime(dstDate);
+		this.totalOntarioDemand = totalOntarioDemand;
+		this.totalZonesDemand = totalZonesDemand;
+		this.difference = difference;
 		this.wallHourNum = dateTime.getHourOfDay();
-		this.demand = demand;
-		this.transmissionZone = TransmissionZone.valueOf(columnName
-				.toUpperCase());
 
 		if (dateTime.getDayOfWeek() > 5) {
 			this.weekend = true;
@@ -35,6 +40,7 @@ public class ZonalDemand {
 		this.timeOfUseRate = TimeOfUseRate.valueOfHour(this.wallHourNum,
 				this.timeOfUseSeason, this.weekend);
 
+		this.zonalDemands = zonalDemands;
 	}
 
 	public int getEstHourNum() {
@@ -61,12 +67,28 @@ public class ZonalDemand {
 		this.zonalDemandId = zonalDemandId;
 	}
 
-	public double getDemand() {
-		return demand;
+	public double getTotalOntarioDemand() {
+		return totalOntarioDemand;
 	}
 
-	public void setDemand(double demand) {
-		this.demand = demand;
+	public void setTotalOntarioDemand(double totalOntarioDemand) {
+		this.totalOntarioDemand = totalOntarioDemand;
+	}
+
+	public double getTotalZonesDemand() {
+		return totalZonesDemand;
+	}
+
+	public void setTotalZonesDemand(double totalZonesDemand) {
+		this.totalZonesDemand = totalZonesDemand;
+	}
+
+	public double getDifference() {
+		return difference;
+	}
+
+	public void setDifference(double difference) {
+		this.difference = difference;
 	}
 
 	public boolean isWeekend() {
@@ -85,14 +107,6 @@ public class ZonalDemand {
 		this.dateTime = dateTime;
 	}
 
-	public TransmissionZone getTransmissionZone() {
-		return transmissionZone;
-	}
-
-	public void setTransmissionZone(TransmissionZone transmissionZone) {
-		this.transmissionZone = transmissionZone;
-	}
-
 	public TimeOfUseRate getTimeOfUseRate() {
 		return timeOfUseRate;
 	}
@@ -109,4 +123,12 @@ public class ZonalDemand {
 		this.timeOfUseSeason = timeOfUseSeason;
 	}
 
+	public HashMap<TransmissionZone, ZonalDemand> getZonalDemands() {
+		return zonalDemands;
+	}
+
+	public void setZonalDemands(
+			HashMap<TransmissionZone, ZonalDemand> zonalDemands) {
+		this.zonalDemands = zonalDemands;
+	}
 }
