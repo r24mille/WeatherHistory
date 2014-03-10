@@ -27,7 +27,7 @@ body {
 
 </style>
 
-<script src="../resources/js/vendor/d3/d3.min.js"></script>
+<script src="/WeatherHistory/resources/js/vendor/d3/d3.min.js"></script>
 </head>
 <body>
 <script>
@@ -57,14 +57,14 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("json/startDate/20050101/endDate/20051231", function(error, data) {
+d3.json("/WeatherHistory/zone/${zoneString}/year/${yearString}/json", function(error, data) {
   data.forEach(function(d) {
-    d.totalOntarioDemand = +d.totalOntarioDemand;
-    d.wallHourNum = +d.wallHourNum;
+    d.demand = +d.demand;
+    d.tempMetric = +d.tempMetric;
   });
 
-  x.domain(d3.extent(data, function(d) { return d.wallHourNum; })).nice();
-  y.domain(d3.extent(data, function(d) { return d.totalOntarioDemand; })).nice();
+  x.domain(d3.extent(data, function(d) { return d.tempMetric; })).nice();
+  y.domain(d3.extent(data, function(d) { return d.demand; })).nice();
 
   svg.append("g")
       .attr("class", "x axis")
@@ -93,8 +93,8 @@ d3.json("json/startDate/20050101/endDate/20051231", function(error, data) {
     .enter().append("circle")
       .attr("class", "dot")
       .attr("r", 2)
-      .attr("cx", function(d) { return x(d.wallHourNum); })
-      .attr("cy", function(d) { return y(d.totalOntarioDemand); })
+      .attr("cx", function(d) { return x(d.tempMetric); })
+      .attr("cy", function(d) { return y(d.demand); })
       .style("fill", function(d) { return color(d.timeOfUseSeason); });
 
   var legend = svg.selectAll(".legend")

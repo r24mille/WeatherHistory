@@ -5,10 +5,6 @@
 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="db-config.xml" />
-	
-	<bean id="iesoDemandDAO" class="ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandSummaryDAO">
-		<constructor-arg name="dataSource" ref="iss4eDataSource" />
-	</bean>
 
 	<bean id="locationDAO" class="ca.uwaterloo.iss4e.weather.dao.LocationDAO">
 		<constructor-arg name="dataSource" ref="iss4eDataSource" />
@@ -18,4 +14,15 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		class="ca.uwaterloo.iss4e.weather.dao.WundergroundObservationDAO">
 		<constructor-arg name="dataSource" ref="iss4eDataSource" />
 	</bean>
+
+	<bean id="zonalDemandAndWeatherDAO" class="ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandAndWeatherDAO">
+		<constructor-arg name="dataSource" ref="iss4eDataSource" />
+	</bean>
+
+	<bean id="zonalDemandSummaryDAO"
+		class="ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandSummaryDAO">
+		<constructor-arg name="dataSource" ref="iss4eDataSource" />
+	</bean>
+
+
 </beans>

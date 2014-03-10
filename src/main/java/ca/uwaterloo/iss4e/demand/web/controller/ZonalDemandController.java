@@ -20,62 +20,56 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 
+import ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandAndWeatherDAO;
 import ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandSummaryDAO;
+import ca.uwaterloo.iss4e.demand.model.ieso.TransmissionZone;
+import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemand;
+import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemandAndWeather;
 import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemandSummary;
 import ca.uwaterloo.iss4e.demand.web.command.ZonalDemandCommand;
 
 @Controller
-@RequestMapping("/zonal/**")
+@RequestMapping("/zone/{zoneString}/year/{yearString}/**")
 public class ZonalDemandController implements ApplicationContextAware {
 	Logger logger = LogManager.getLogger(this.getClass());
 	private ApplicationContext applicationContext;
 
 	@RequestMapping("/html")
-	public String html(@ModelAttribute ZonalDemandCommand command, Model model) {
-		Gson gson = new Gson();
-		ZonalDemandSummaryDAO zonalDemandSummaryDAO = (ZonalDemandSummaryDAO) applicationContext
-				.getBean("zonalDemandSummaryDAO");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		try {
-			Date startDate = sdf.parse("2004-01-01 00:00:00");
-			Date endDate = sdf.parse("2004-12-31 23:59:59");
-			List<ZonalDemandSummary> zonalDemandSummaries = zonalDemandSummaryDAO
-					.getZonalDemandSummariesForRange(startDate, endDate);
-			logger.debug("zonalDemandSummaries size="
-					+ zonalDemandSummaries.size());
-
-			model.addAttribute("zonalDemandSummaries",
-					gson.toJson(zonalDemandSummaries));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	public String html(@ModelAttribute ZonalDemandCommand command,
+			@PathVariable String zoneString, @PathVariable String yearString,
+			Model model) {
+		logger.debug("html hit");
+		model.addAttribute("zoneString", zoneString);
+		model.addAttribute("yearString", yearString);
 		model.addAttribute("command", command);
 		return "zonal";
 	}
 
-	@RequestMapping(value = "/json/startDate/{startDateString}/endDate/{endDateString}", method = RequestMethod.GET)
+	@RequestMapping(value = "/json", method = RequestMethod.GET)
 	public @ResponseBody
-	List<ZonalDemandSummary> json(@PathVariable String startDateString, @PathVariable String endDateString) {
-		ZonalDemandSummaryDAO zonalDemandSummaryDAO = (ZonalDemandSummaryDAO) applicationContext
-				.getBean("zonalDemandSummaryDAO");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+	List<ZonalDemandAndWeather> zoneJson(@PathVariable String zoneString,
+			@PathVariable String yearString) {
+		ZonalDemandAndWeatherDAO zonalDemandAndWeatherDAO = (ZonalDemandAndWeatherDAO) applicationContext
+				.getBean("zonalDemandAndWeatherDAO");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		TransmissionZone transmissionZone = TransmissionZone.valueOf(zoneString
+				.toUpperCase());
 
-		List<ZonalDemandSummary> zonalDemandSummaries = null;
+		List<ZonalDemandAndWeather> zonalDemandAndWeathers = null;
 		try {
-			Date startDate = sdf.parse(startDateString + " 00:00:00");
-			Date endDate = sdf.parse(endDateString + " 23:59:59");
-			zonalDemandSummaries = zonalDemandSummaryDAO
-					.getZonalDemandSummariesForRange(startDate, endDate);
-			logger.debug("zonalDemandSummaries size="
-					+ zonalDemandSummaries.size());
+			Date startDate = sdf.parse(yearString + "-01-01 00:00:00");
+			Date endDate = sdf.parse(yearString + "-12-31 23:59:59");
+			zonalDemandAndWeathers = zonalDemandAndWeatherDAO
+					.getZonalDemandAndWeather(transmissionZone, startDate,
+							endDate);
+			logger.debug("zonalDemandAndWeathers size="
+					+ zonalDemandAndWeathers.size());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return zonalDemandSummaries;
+		return zonalDemandAndWeathers;
 	}
 
 	@Override
