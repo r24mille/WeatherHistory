@@ -46,7 +46,7 @@ public class BuildIesoHistory {
 		TreeSet<String> dateStrings = new TreeSet<String>();
 		for (ZonalDemandSummary zonalDemandSummary : demandSummaries) {
 			dateStrings.add(HistoryDate.formatDateString(zonalDemandSummary
-					.getDateTime()));
+					.getDateDst()));
 		}
 
 		int interMinCount = 0;

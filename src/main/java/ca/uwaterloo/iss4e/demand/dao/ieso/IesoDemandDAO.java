@@ -19,7 +19,7 @@ public class IesoDemandDAO {
 
 	public List<ZonalDemandSummary> getZonalDemandSummariesForRange(Date startDate, Date endDate) {
 		String sql = "select concat(date_format(demand_datetime_standard, '%Y-%m-%d %H:%i:%s'), ' ', demand_timezone) as demand_datetime_with_timezone, "
-				+ "hour, total_ontario, total_zones, difference, northwest, northeast, "
+				+ "zonal_demand_id, hour, total_ontario, total_zones, difference, northwest, northeast, "
 				+ "ottawa, east, toronto, essa, bruce, southwest, niagara, west "
 				+ "from zonal_demand where demand_datetime_dst >= ? and "
 				+ "demand_datetime_dst <= ?";
