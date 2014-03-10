@@ -22,12 +22,12 @@ body {
 }
 
 .dot {
-  stroke: #000;
+  stroke: transparent;
 }
 
 </style>
 
-<script src="../resources/js/vendor/d3/d3.js"></script>
+<script src="../resources/js/vendor/d3/d3.min.js"></script>
 </head>
 <body>
 <script>
@@ -75,7 +75,7 @@ d3.json("json/startDate/20050101/endDate/20051231", function(error, data) {
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("Sepal Width (cm)");
+      .text("Hour of Day");
 
   svg.append("g")
       .attr("class", "y axis")
@@ -86,16 +86,16 @@ d3.json("json/startDate/20050101/endDate/20051231", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Sepal Length (cm)")
+      .text("Demand (MW)")
 
   svg.selectAll(".dot")
       .data(data)
     .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", 3.5)
+      .attr("r", 2)
       .attr("cx", function(d) { return x(d.wallHourNum); })
       .attr("cy", function(d) { return y(d.totalOntarioDemand); })
-      .style("fill", function(d) { return color(d.timeOfUseRate); });
+      .style("fill", function(d) { return color(d.timeOfUseSeason); });
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())

@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.client.RestTemplate;
 
-import ca.uwaterloo.iss4e.demand.dao.ieso.IesoDemandDAO;
+import ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandSummaryDAO;
 import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemandSummary;
 import ca.uwaterloo.iss4e.weather.dao.LocationDAO;
 import ca.uwaterloo.iss4e.weather.dao.WundergroundObservationDAO;
@@ -17,8 +17,8 @@ import ca.uwaterloo.iss4e.weather.wunderground.api.util.HistoryDate;
 public class BuildIesoHistory {
 	static ApplicationContext context = new ClassPathXmlApplicationContext(
 			"applicationContext.xml");
-	static IesoDemandDAO iesoDemandDAO = (IesoDemandDAO) context
-			.getBean("iesoDemandDAO");
+	static ZonalDemandSummaryDAO zonalDemandSummaryDAO = (ZonalDemandSummaryDAO) context
+			.getBean("zonalDemandSummaryDAO");
 	static LocationDAO locationDAO = (LocationDAO) context
 			.getBean("locationDAO");
 	static WundergroundObservationDAO wundergroundObservationDAO = (WundergroundObservationDAO) context
@@ -40,7 +40,7 @@ public class BuildIesoHistory {
 		Calendar endCal = Calendar.getInstance();
 		endCal.set(2013, Calendar.DECEMBER, 31, 23, 59, 59);
 		endCal.set(Calendar.MILLISECOND, 0);
-		List<ZonalDemandSummary> demandSummaries = iesoDemandDAO
+		List<ZonalDemandSummary> demandSummaries = zonalDemandSummaryDAO
 				.getZonalDemandSummariesForRange(startCal.getTime(),
 						endCal.getTime());
 		TreeSet<String> dateStrings = new TreeSet<String>();

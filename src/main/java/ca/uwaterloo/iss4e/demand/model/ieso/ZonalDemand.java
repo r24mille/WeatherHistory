@@ -13,14 +13,13 @@ public class ZonalDemand {
 	private TimeOfUseRate timeOfUseRate;
 	private TimeOfUseSeason timeOfUseSeason;
 
-	public ZonalDemand(Date dstDate, double demand, String columnName) {
+	public ZonalDemand(Date dstDate, double demand, TransmissionZone transmissionZone) {
 		DateTime dateTimeDst = new DateTime(dstDate);
 		this.dateDst = dateTimeDst.toDate();
 
 		this.wallHourNum = dateTimeDst.getHourOfDay();
 		this.demand = demand;
-		this.transmissionZone = TransmissionZone.valueOf(columnName
-				.toUpperCase());
+		this.transmissionZone = transmissionZone;
 
 		if (dateTimeDst.getDayOfWeek() > 5) {
 			this.weekend = true;

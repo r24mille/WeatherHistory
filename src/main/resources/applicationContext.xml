@@ -6,7 +6,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="db-config.xml" />
 	
-	<bean id="iesoDemandDAO" class="ca.uwaterloo.iss4e.demand.dao.ieso.IesoDemandDAO">
+	<bean id="iesoDemandDAO" class="ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandSummaryDAO">
 		<constructor-arg name="dataSource" ref="iss4eDataSource" />
 	</bean>
 

@@ -39,32 +39,35 @@ public class ZonalDemandSummaryMapper implements RowMapper<ZonalDemandSummary> {
 				10);
 
 		zonalDemands.put(TransmissionZone.NORTHWEST, new ZonalDemand(dstDate,
-				rs.getDouble("zonal_demand.northwest"), "northwest"));
+				rs.getDouble("zonal_demand.northwest"),
+				TransmissionZone.NORTHWEST));
 		zonalDemands.put(TransmissionZone.NORTHEAST, new ZonalDemand(dstDate,
-				rs.getDouble("zonal_demand.northeast"), "northeast"));
+				rs.getDouble("zonal_demand.northeast"),
+				TransmissionZone.NORTHEAST));
 		zonalDemands.put(TransmissionZone.OTTAWA,
 				new ZonalDemand(dstDate, rs.getDouble("zonal_demand.ottawa"),
-						"ottawa"));
+						TransmissionZone.OTTAWA));
 		zonalDemands.put(TransmissionZone.EAST,
 				new ZonalDemand(dstDate, rs.getDouble("zonal_demand.east"),
-						"east"));
+						TransmissionZone.EAST));
 		zonalDemands.put(TransmissionZone.TORONTO,
 				new ZonalDemand(dstDate, rs.getDouble("zonal_demand.toronto"),
-						"toronto"));
+						TransmissionZone.TORONTO));
 		zonalDemands.put(TransmissionZone.ESSA,
 				new ZonalDemand(dstDate, rs.getDouble("zonal_demand.essa"),
-						"essa"));
+						TransmissionZone.ESSA));
 		zonalDemands.put(TransmissionZone.BRUCE,
 				new ZonalDemand(dstDate, rs.getDouble("zonal_demand.bruce"),
-						"bruce"));
+						TransmissionZone.BRUCE));
 		zonalDemands.put(TransmissionZone.SOUTHWEST, new ZonalDemand(dstDate,
-				rs.getDouble("zonal_demand.southwest"), "southwest"));
+				rs.getDouble("zonal_demand.southwest"),
+				TransmissionZone.SOUTHWEST));
 		zonalDemands.put(TransmissionZone.NIAGARA,
 				new ZonalDemand(dstDate, rs.getDouble("zonal_demand.niagara"),
-						"niagara"));
+						TransmissionZone.NIAGARA));
 		zonalDemands.put(TransmissionZone.WEST,
 				new ZonalDemand(dstDate, rs.getDouble("zonal_demand.west"),
-						"west"));
+						TransmissionZone.WEST));
 
 		ZonalDemandSummary zonalDemandSummary = new ZonalDemandSummary(dstDate,
 				totalOntarioDemand, totalZonesDemand, difference, zonalDemands);

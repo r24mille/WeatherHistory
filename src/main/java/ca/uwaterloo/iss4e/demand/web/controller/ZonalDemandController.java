@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 
-import ca.uwaterloo.iss4e.demand.dao.ieso.IesoDemandDAO;
+import ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandSummaryDAO;
 import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemandSummary;
 import ca.uwaterloo.iss4e.demand.web.command.ZonalDemandCommand;
 
@@ -33,13 +33,13 @@ public class ZonalDemandController implements ApplicationContextAware {
 	@RequestMapping("/html")
 	public String html(@ModelAttribute ZonalDemandCommand command, Model model) {
 		Gson gson = new Gson();
-		IesoDemandDAO iesoDemandDAO = (IesoDemandDAO) applicationContext
-				.getBean("iesoDemandDAO");
+		ZonalDemandSummaryDAO zonalDemandSummaryDAO = (ZonalDemandSummaryDAO) applicationContext
+				.getBean("zonalDemandSummaryDAO");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
 			Date startDate = sdf.parse("2004-01-01 00:00:00");
 			Date endDate = sdf.parse("2004-12-31 23:59:59");
-			List<ZonalDemandSummary> zonalDemandSummaries = iesoDemandDAO
+			List<ZonalDemandSummary> zonalDemandSummaries = zonalDemandSummaryDAO
 					.getZonalDemandSummariesForRange(startDate, endDate);
 			logger.debug("zonalDemandSummaries size="
 					+ zonalDemandSummaries.size());
@@ -58,15 +58,15 @@ public class ZonalDemandController implements ApplicationContextAware {
 	@RequestMapping(value = "/json/startDate/{startDateString}/endDate/{endDateString}", method = RequestMethod.GET)
 	public @ResponseBody
 	List<ZonalDemandSummary> json(@PathVariable String startDateString, @PathVariable String endDateString) {
-		IesoDemandDAO iesoDemandDAO = (IesoDemandDAO) applicationContext
-				.getBean("iesoDemandDAO");
+		ZonalDemandSummaryDAO zonalDemandSummaryDAO = (ZonalDemandSummaryDAO) applicationContext
+				.getBean("zonalDemandSummaryDAO");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
 		List<ZonalDemandSummary> zonalDemandSummaries = null;
 		try {
 			Date startDate = sdf.parse(startDateString + " 00:00:00");
 			Date endDate = sdf.parse(endDateString + " 23:59:59");
-			zonalDemandSummaries = iesoDemandDAO
+			zonalDemandSummaries = zonalDemandSummaryDAO
 					.getZonalDemandSummariesForRange(startDate, endDate);
 			logger.debug("zonalDemandSummaries size="
 					+ zonalDemandSummaries.size());

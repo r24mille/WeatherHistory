@@ -10,10 +10,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ca.uwaterloo.iss4e.demand.dao.ieso.mapper.ZonalDemandSummaryMapper;
 import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemandSummary;
 
-public class IesoDemandDAO {
+public class ZonalDemandSummaryDAO {
 	private static DataSource iss4eDataSource;
 
-	public IesoDemandDAO(DataSource dataSource) {
+	public ZonalDemandSummaryDAO(DataSource dataSource) {
 		this.iss4eDataSource = dataSource;
 	}
 
