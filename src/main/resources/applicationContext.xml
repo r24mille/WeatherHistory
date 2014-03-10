@@ -7,15 +7,15 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 	<import resource="db-config.xml" />
 	
 	<bean id="iesoDemandDAO" class="ca.uwaterloo.iss4e.demand.dao.ieso.IesoDemandDAO">
-		<constructor-arg name="dataSource" ref="iesoDataSource" />
+		<constructor-arg name="dataSource" ref="iss4eDataSource" />
 	</bean>
 
 	<bean id="locationDAO" class="ca.uwaterloo.iss4e.weather.dao.LocationDAO">
-		<constructor-arg name="dataSource" ref="weathertablesDataSource" />
+		<constructor-arg name="dataSource" ref="iss4eDataSource" />
 	</bean>
 
 	<bean id="wundergroundObservationDAO"
 		class="ca.uwaterloo.iss4e.weather.dao.WundergroundObservationDAO">
-		<constructor-arg name="dataSource" ref="weathertablesDataSource" />
+		<constructor-arg name="dataSource" ref="iss4eDataSource" />
 	</bean>
 </beans>

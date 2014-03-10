@@ -9,18 +9,10 @@
 		<constructor-arg value="your_weather_underground_api_key" />
 	</bean>
 
-	<bean id="iesoDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="iss4eDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://www.example.com:3306/default_schema" />
-		<property name="username" value="your_username" />
-		<property name="password" value="your_password" />
-	</bean>
-
-	<bean id="weathertablesDataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://www.example.com:3306/default_schema" />
+		<property name="url" value="jdbc:mysql://www.example.com:3306" />
 		<property name="username" value="your_username" />
 		<property name="password" value="your_password" />
 	</bean>

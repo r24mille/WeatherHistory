@@ -15,10 +15,10 @@ import ca.uwaterloo.iss4e.weather.wunderground.api.response.Observation;
 
 public class WundergroundObservationDAO {
 	public static final String OBSERVATION_STORAGE_TIMEZONE = "EST";
-	private static DataSource weathertablesDataSource;
+	private static DataSource iss4eDataSource;
 
 	public WundergroundObservationDAO(DataSource dataSource) {
-		this.weathertablesDataSource = dataSource;
+		this.iss4eDataSource = dataSource;
 	}
 
 	public void insertObservation(int locationId, Observation observation) {
@@ -29,7 +29,7 @@ public class WundergroundObservationDAO {
 		df.setTimeZone(TimeZone.getTimeZone(OBSERVATION_STORAGE_TIMEZONE));
 		String dateStringWithStandardTime = df.format(dateWithDST);
 
-		String sql = "insert into wunderground_observation (location_id, observation_datetime_dst, "
+		String sql = "insert into weathertables.wunderground_observation (location_id, observation_datetime_dst, "
 				+ "observation_datetime_standard, observation_timezone, "
 				+ "temp_metric, temp_imperial, dewpoint_metric, dewpoint_imperial, humidity, "
 				+ "windspeed_metric, windspeed_imperial, wind_gust_metric, wind_gust_imperial, "
@@ -41,7 +41,7 @@ public class WundergroundObservationDAO {
 				+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
 				+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-		JdbcTemplate template = new JdbcTemplate(weathertablesDataSource);
+		JdbcTemplate template = new JdbcTemplate(iss4eDataSource);
 		template.update(
 				sql,
 				new Object[] { locationId, observation.getDate(),
@@ -78,11 +78,11 @@ public class WundergroundObservationDAO {
 	public List<Observation> getObservationRange(Date startDate, Date endDate) {
 		String sql = "select concat(date_format(observation_datetime_standard, '%Y-%m-%d %H:%i:%s'), ' ', observation_timezone) as observation_datetime_with_timezone, "
 				+ "wunderground_observation.* "
-				+ "from wunderground_observation "
+				+ "from weathertables.wunderground_observation "
 				+ "where observation_datetime_standard >= ? and observation_datetime_standard <= ? "
 				+ "order by observation_datetime_standard asc";
 
-		JdbcTemplate template = new JdbcTemplate(weathertablesDataSource);
+		JdbcTemplate template = new JdbcTemplate(iss4eDataSource);
 		List<Observation> observations = template.query(sql, new Object[] {
 				startDate, endDate }, new WundergroundObservationMapper());
 		return observations;
