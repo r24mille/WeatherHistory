@@ -55,9 +55,8 @@ public class ForecastIoBuildIesoHistory {
 			reqCount++;
 
 			// Must obey 1000 queries per day according to terms of use
-			if (reqCount >= 890) {
-				// The 10 queries will finish fairly quickly. Wait 25 hours
-				// until next batch
+			if (reqCount >= 1000) {
+				// Wait 25 hours until next batch
 				Thread.sleep(90000000);
 				reqCount = 0;
 			}
