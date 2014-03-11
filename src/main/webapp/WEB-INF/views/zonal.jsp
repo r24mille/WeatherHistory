@@ -19,10 +19,9 @@
 <body>
 	<div id="wrapper">
 		<div id="title">
-			<h1>${command.zoneString} Zone, ${command.year}</h1>
+			<h1>${zoneString} Zone, ${year}</h1>
 		</div>
 
-		<form:form>
 		<div id="menu">
 			<h3>X-Axis</h3>
 			<ul id="x-axis-menu"></ul>
@@ -40,10 +39,7 @@
 				<li><a href="/WeatherHistory/zone/${loopZone}/year/${year}/html">${loopZone}</a>
 			</c:forEach>
 			</ul>
-			
-			<input type="submit">
 		</div>
-		</form:form>
 		
 		<div id="chart"></div>
 	</div>

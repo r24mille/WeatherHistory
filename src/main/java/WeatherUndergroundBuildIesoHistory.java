@@ -14,7 +14,7 @@ import ca.uwaterloo.iss4e.weather.wunderground.api.response.HistoryResponse;
 import ca.uwaterloo.iss4e.weather.wunderground.api.response.Observation;
 import ca.uwaterloo.iss4e.weather.wunderground.api.util.HistoryDate;
 
-public class BuildIesoHistory {
+public class WeatherUndergroundBuildIesoHistory {
 	static ApplicationContext context = new ClassPathXmlApplicationContext(
 			"applicationContext.xml");
 	static ZonalDemandSummaryDAO zonalDemandSummaryDAO = (ZonalDemandSummaryDAO) context
@@ -56,23 +56,23 @@ public class BuildIesoHistory {
 			interMinCount++;
 			interDayCount++;
 
-			// // Must obey 10 queries per minute, 500 queries per day API key
-			// // terms-of-use
-			// if (interMinCount >= 10) {
-			// // The 10 queries will finish fairly quickly. Just wait a minute
-			// // for simplicity
-			// Thread.sleep(60000);
-			// interMinCount = 0;
-			// }
-			// if (interDayCount >= 500) {
-			// // 500 queries / 10 query batches = 50 batches
-			// // 50 batches * 60 seconds = 3000 seconds for all batches
-			// // 86400 seconds - 3000 seconds = 83400 seconds necessary to
-			// // obey daily limit
-			// // 83400 seconds = 83400000 milliseconds
-			// Thread.sleep(83400000);
-			// interDayCount = 0;
-			// }
+			// Must obey 10 queries per minute, 500 queries per day API key
+			// terms-of-use
+			if (interMinCount >= 10) {
+				// The 10 queries will finish fairly quickly. Just wait a minute
+				// for simplicity
+				Thread.sleep(60000);
+				interMinCount = 0;
+			}
+			if (interDayCount >= 500) {
+				// 500 queries / 10 query batches = 50 batches
+				// 50 batches * 60 seconds = 3000 seconds for all batches
+				// 86400 seconds - 3000 seconds = 83400 seconds necessary to
+				// obey daily limit
+				// 83400 seconds = 83400000 milliseconds
+				Thread.sleep(83400000);
+				interDayCount = 0;
+			}
 		}
 	}
 

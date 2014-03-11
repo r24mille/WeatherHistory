@@ -10,7 +10,11 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.google.gson.Gson;
+
 import ca.uwaterloo.iss4e.weather.dao.mapper.WundergroundObservationMapper;
+import ca.uwaterloo.iss4e.weather.forecastio.api.response.DataPoint;
+import ca.uwaterloo.iss4e.weather.forecastio.api.response.GivenTimeResponse;
 import ca.uwaterloo.iss4e.weather.wunderground.api.response.Observation;
 
 public class WundergroundObservationDAO {
@@ -86,5 +90,47 @@ public class WundergroundObservationDAO {
 		List<Observation> observations = template.query(sql, new Object[] {
 				startDate, endDate }, new WundergroundObservationMapper());
 		return observations;
+	}
+
+	/**
+	 * Method for inserting a forecast.io {@link DataPoint} as an
+	 * {@link Observation} into the database using their common features.
+	 * 
+	 * @param locationId
+	 * @param dataPoint
+	 * @param offset
+	 *            GMT offset for localized Date
+	 */
+	public void insertDataPoint(int locationId, GivenTimeResponse givenTimeResponse) {
+		int offset = givenTimeResponse.getOffset();
+		DataPoint dataPoint = givenTimeResponse.getCurrently();
+		
+		// Being more specific about the storage of time in MySQL
+		// Matching storing everything as EST for ease of working with IESO data
+		Date dateWithDST = dataPoint.getDate(offset);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		df.setTimeZone(TimeZone.getTimeZone(OBSERVATION_STORAGE_TIMEZONE));
+		String dateStringWithStandardTime = df.format(dateWithDST);
+
+		String sql = "insert into weathertables.wunderground_observation (location_id, observation_datetime_dst, "
+				+ "observation_datetime_standard, observation_timezone, "
+				+ "temp_metric, humidity, windspeed_metric, "
+				+ "wind_direction_degrees, visibility_metric, "
+				+ "pressure_metric, condition_phrase, icon, metar) "
+				+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		JdbcTemplate template = new JdbcTemplate(iss4eDataSource);
+		Gson gson = new Gson();
+		template.update(
+				sql,
+				new Object[] { locationId, dataPoint.getDate(offset),
+						dateStringWithStandardTime,
+						OBSERVATION_STORAGE_TIMEZONE,
+						dataPoint.getTempMetric(), dataPoint.getHumidity(),
+						dataPoint.getWindSpeedMetric(),
+						dataPoint.getWindDirectionDegrees(),
+						dataPoint.getVisibilityMetric(),
+						dataPoint.getPressureMetric(), dataPoint.getSummary(),
+						dataPoint.getIcon(), "forecast.io sources: " + gson.toJson(givenTimeResponse.getFlags().getSources()) });
 	}
 }

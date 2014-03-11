@@ -43,7 +43,7 @@ public class ZonalDemandController implements ApplicationContextAware {
 		List<String> zoneStrings = new ArrayList<String>(10);
 		zoneStrings.add("Bruce");
 		zoneStrings.add("East");
-		zoneStrings.add("East");
+		zoneStrings.add("Essa");
 		zoneStrings.add("Niagara");
 		zoneStrings.add("Northeast");
 		zoneStrings.add("Northwest");
