@@ -26,13 +26,13 @@ public class ForecastIoBuildIesoHistory {
 			.getBean("wundergroundObservationDAO");
 	static String forecastIoApiKey = (String) context
 			.getBean("forecastIoApiKey");
-
+	static int FORECAST_IO_LIMIT = 1000;
 	// Configure these each run
-	static TransmissionZone transmissionZone = TransmissionZone.OTTAWA;
+	static TransmissionZone transmissionZone = TransmissionZone.NORTHWEST;
 
 	public static void main(String[] args) throws InterruptedException {
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2003, Calendar.OCTOBER, 25, 0, 0, 0);
+		startCal.set(2003, Calendar.MAY, 1, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
 		endCal.set(2013, Calendar.DECEMBER, 31, 23, 59, 59);
@@ -40,7 +40,7 @@ public class ForecastIoBuildIesoHistory {
 		List<ZonalDemandSummary> demandSummaries = zonalDemandSummaryDAO
 				.getZonalDemandSummariesInRangeMissingWeatherObservation(
 						startCal.getTime(), endCal.getTime(),
-						transmissionZone.getLocationId(), 1000);
+						transmissionZone.getLocationId(), FORECAST_IO_LIMIT);
 
 		TreeSet<String> dateStrings = new TreeSet<String>();
 		for (ZonalDemandSummary zonalDemandSummary : demandSummaries) {
@@ -55,7 +55,7 @@ public class ForecastIoBuildIesoHistory {
 			reqCount++;
 
 			// Must obey 1000 queries per day according to terms of use
-			if (reqCount >= 1000) {
+			if (reqCount >= FORECAST_IO_LIMIT) {
 				// Wait 25 hours until next batch
 				Thread.sleep(90000000);
 				reqCount = 0;
