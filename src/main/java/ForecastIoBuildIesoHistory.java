@@ -25,14 +25,14 @@ public class ForecastIoBuildIesoHistory {
 	static WundergroundObservationDAO wundergroundObservationDAO = (WundergroundObservationDAO) context
 			.getBean("wundergroundObservationDAO");
 	static String forecastIoApiKey = (String) context
-			.getBean("forecastIoApiKey");
+			.getBean("forecastIoApiKey4");
 	static int FORECAST_IO_LIMIT = 1000;
 	// Configure these each run
-	static TransmissionZone transmissionZone = TransmissionZone.NORTHWEST;
+	static TransmissionZone transmissionZone = TransmissionZone.NORTHEAST;
 
 	public static void main(String[] args) throws InterruptedException {
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(2003, Calendar.MAY, 1, 0, 0, 0);
+		startCal.set(2003, Calendar.JANUARY, 1, 0, 0, 0);
 		startCal.set(Calendar.MILLISECOND, 0);
 		Calendar endCal = Calendar.getInstance();
 		endCal.set(2013, Calendar.DECEMBER, 31, 23, 59, 59);

@@ -29,7 +29,7 @@ function initDegreeDayChart(zone, year) {
 						var xAxis = "tempMetric", yAxis = "demand", pointCategory = "timeOfUseRate";
 						var xAxisOptions = [ "tempMetric", "wallHourNum" ];
 						var categoryOptions = [ "timeOfUseRate",
-								"timeOfUseSeason", "weekend" ];
+								"timeOfUseSeason", "weekend", "dayOfWeek" ];
 						var descriptions = {
 							"tempMetric" : "Outdoor Temperature (degrees Celsius)",
 							"wallHourNum" : "Hour-of-Day, with daylight savings (hours 0-23)"

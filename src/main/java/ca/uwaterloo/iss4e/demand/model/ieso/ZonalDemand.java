@@ -12,6 +12,7 @@ public class ZonalDemand {
 	private TransmissionZone transmissionZone;
 	private TimeOfUseRate timeOfUseRate;
 	private TimeOfUseSeason timeOfUseSeason;
+	private String dayOfWeek;
 
 	public ZonalDemand(Date dstDate, double demand, TransmissionZone transmissionZone) {
 		DateTime dateTimeDst = new DateTime(dstDate);
@@ -30,6 +31,8 @@ public class ZonalDemand {
 		this.timeOfUseSeason = TimeOfUseSeason.valueOfDateTime(dateTimeDst);
 		this.timeOfUseRate = TimeOfUseRate.valueOfHour(this.wallHourNum,
 				this.timeOfUseSeason, this.weekend);
+		
+		this.dayOfWeek = dateTimeDst.dayOfWeek().getAsText();
 
 	}
 
@@ -89,4 +92,11 @@ public class ZonalDemand {
 		this.timeOfUseSeason = timeOfUseSeason;
 	}
 
+	public String getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	public void setDayOfWeek(String dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
 }
