@@ -29,9 +29,12 @@ function initDegreeDayChart(zone, year) {
 			"dayOfWeek" ];
 	var dayFilterOptions = [ "Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday" ];
+	var seasonFilterOptions = [ "SUMMER", "WINTER" ];
+	var rateFilterOptions = [ "OFF_PEAK", "MID_PEAK", "ON_PEAK" ];
 
 	// Initialize all filters to be selected
-	var selectedDayFilters = dayFilterOptions.slice(0);
+	var selectedFilters = [].concat(dayFilterOptions, seasonFilterOptions,
+			rateFilterOptions);
 
 	// Verbose descriptions of axis and category options
 	var descriptions = {
@@ -58,18 +61,18 @@ function initDegreeDayChart(zone, year) {
 		"Saturday" : "Saturday"
 	};
 
+	// Initialize the SVG chart object
+	var svg = d3.select("#chart").append("svg").attr("width", 1200).attr(
+			"height", 700);
+	var xScale, yScale;
+	svg.append('g').classed('chart', true).attr('transform',
+			'translate(85, -95)');
+
+	// Make call for JSON data
 	d3.json("/WeatherHistory/zone/" + zone + "/year/" + year + "/json",
 			function(data) {
 				var keys = _.keys(data[0]);
 				var bounds = getBounds(data, 1);
-
-				// SVG AND D3 STUFF
-				var svg = d3.select("#chart").append("svg").attr("width", 1200)
-						.attr("height", 700);
-				var xScale, yScale;
-
-				svg.append('g').classed('chart', true).attr('transform',
-						'translate(80, -60)');
 
 				// Build menus
 				d3.select('#x-axis-menu').selectAll('li').data(xAxisOptions)
@@ -99,14 +102,50 @@ function initDegreeDayChart(zone, year) {
 						function(d) {
 							return d;
 						}).classed('selected', function(d) {
-					return _.contains(selectedDayFilters, d);
+					return _.contains(selectedFilters, d);
 				}).on('click', function(d) {
 					// Toggle filters
-					if (_.contains(selectedDayFilters, d)) {
-						var dayIndex = _.indexOf(selectedDayFilters, d);
-						selectedDayFilters.splice(dayIndex, 1);
+					if (_.contains(selectedFilters, d)) {
+						var filterIndex = _.indexOf(selectedFilters, d);
+						selectedFilters.splice(filterIndex, 1);
 					} else {
-						selectedDayFilters.push(d);
+						selectedFilters.push(d);
+					}
+					updateChart();
+					updateMenus();
+				});
+
+				d3.select('#season-filter-menu').selectAll('li').data(
+						seasonFilterOptions).enter().append('li').text(
+						function(d) {
+							return descriptions[d];
+						}).classed('selected', function(d) {
+					return _.contains(selectedFilters, d);
+				}).on('click', function(d) {
+					// Toggle filters
+					if (_.contains(selectedFilters, d)) {
+						var filterIndex = _.indexOf(selectedFilters, d);
+						selectedFilters.splice(filterIndex, 1);
+					} else {
+						selectedFilters.push(d);
+					}
+					updateChart();
+					updateMenus();
+				});
+
+				d3.select('#rate-filter-menu').selectAll('li').data(
+						rateFilterOptions).enter().append('li').text(
+						function(d) {
+							return descriptions[d];
+						}).classed('selected', function(d) {
+					return _.contains(selectedFilters, d);
+				}).on('click', function(d) {
+					// Toggle filters
+					if (_.contains(selectedFilters, d)) {
+						var filterIndex = _.indexOf(selectedFilters, d);
+						selectedFilters.splice(filterIndex, 1);
+					} else {
+						selectedFilters.push(d);
 					}
 					updateChart();
 					updateMenus();
@@ -158,7 +197,7 @@ function initDegreeDayChart(zone, year) {
 				// RENDERING FUNCTIONS
 				function updateChart() {
 					var color = d3.scale.category10(); // Reset colors
-					
+
 					updateScales();
 					d3.select('svg g.chart').selectAll('circle').transition()
 							.duration(1500).ease('quad-out').attr('cx',
@@ -179,9 +218,12 @@ function initDegreeDayChart(zone, year) {
 									function(d) {
 										if (isNaN(d[xAxis])
 												|| isNaN(d[yAxis])
-												|| !_.contains(
-														selectedDayFilters,
-														d["dayOfWeek"])) {
+												|| !_.contains(selectedFilters,
+														d["dayOfWeek"])
+												|| !_.contains(selectedFilters,
+														d["timeOfUseSeason"])
+												|| !_.contains(selectedFilters,
+														d["timeOfUseRate"])) {
 											return 0;
 										} else {
 											return 2;
@@ -201,24 +243,22 @@ function initDegreeDayChart(zone, year) {
 					// Update legend
 					svg.selectAll(".legend").data([]).exit().remove();
 					var legend = svg.selectAll(".legend").data(color.domain());
-										
-					legend.enter().append("g").transition()
-				      .duration(0).attr("class", "legend").attr(
-									"transform", function(d, i) {
-										return "translate(0," + i * 20 + ")";
-									});
 
-					legend.append("rect").transition()
-				      .duration(0).attr("x", 1000 - 18)
-							.attr("width", 18).attr("height", 18).style("fill",
-									color);
-
-					legend.append("text").transition()
-				      .duration(0).attr("x", 1000 - 24).attr("y", 9)
-							.attr("dy", ".35em").style("text-anchor", "end")
-							.text(function(d) {
-								return descriptions[d];
+					legend.enter().append("g").transition().duration(0).attr(
+							"class", "legend").attr("transform",
+							function(d, i) {
+								return "translate(0," + i * 20 + ")";
 							});
+
+					legend.append("rect").transition().duration(0).attr("x",
+							1000 - 18).attr("width", 18).attr("height", 18)
+							.style("fill", color);
+
+					legend.append("text").transition().duration(0).attr("x",
+							1000 - 24).attr("y", 9).attr("dy", ".35em").style(
+							"text-anchor", "end").text(function(d) {
+						return descriptions[d];
+					});
 				}
 
 				function updateScales() {
@@ -238,10 +278,6 @@ function initDegreeDayChart(zone, year) {
 				function makeYAxis(s) {
 					s.call(d3.svg.axis().scale(yScale).orient("left"));
 				}
-				
-				function updateLegend() {
-					
-				}
 
 				// Update 'selected' class in menus
 				function updateMenus() {
@@ -254,9 +290,9 @@ function initDegreeDayChart(zone, year) {
 								return d === pointCategory;
 							});
 
-					d3.select('#day-filter-menu').selectAll('li').classed(
+					d3.select('#filter-menu').selectAll('li').classed(
 							'selected', function(d) {
-								return _.contains(selectedDayFilters, d);
+								return _.contains(selectedFilters, d);
 							});
 				}
 
