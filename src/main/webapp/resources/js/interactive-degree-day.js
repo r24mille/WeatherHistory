@@ -29,18 +29,33 @@ function initDegreeDayChart(zone, year) {
 			"dayOfWeek" ];
 	var dayFilterOptions = [ "Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday" ];
-	var selectedDayFilters = dayFilterOptions.slice(0); // Initialize all
-	// filters to be
-	// selected
+
+	// Initialize all filters to be selected
+	var selectedDayFilters = dayFilterOptions.slice(0);
 
 	// Verbose descriptions of axis and category options
 	var descriptions = {
-		"tempMetric" : "Outdoor Temperature (degrees Celsius)",
-		"wallHourNum" : "Hour-of-Day, with daylight savings (hours 0-23)",
-		"timeOfUseRate" : "Ontario's time-of-use daily price periods",
-		"timeOfUseSeason" : "Ontario's time-of-use seasons",
+		"tempMetric" : "Outdoor Temperature (Celsius)",
+		"wallHourNum" : "Hour-of-Day (hours 0-23)",
+		"timeOfUseRate" : "Time-of-Use daily price periods",
+		"timeOfUseSeason" : "Time-of-Use seasons",
 		"weekend" : "Weekend",
-		"dayOfWeek" : "Day of the week"
+		"dayOfWeek" : "Day of the week",
+		"demand" : "Electricity Demand (MW)",
+		"true" : "Weekend",
+		"false" : "Weekday",
+		"ON_PEAK" : "On-peak hours",
+		"OFF_PEAK" : "Off-peak hours",
+		"MID_PEAK" : "Mid-peak hours",
+		"SUMMER" : "Summer",
+		"WINTER" : "Winter",
+		"Sunday" : "Sunday",
+		"Monday" : "Monday",
+		"Tuesday" : "Tuesday",
+		"Wednesday" : "Wednesday",
+		"Thursday" : "Thursday",
+		"Friday" : "Friday",
+		"Saturday" : "Saturday"
 	};
 
 	d3.json("/WeatherHistory/zone/" + zone + "/year/" + year + "/json",
@@ -59,7 +74,7 @@ function initDegreeDayChart(zone, year) {
 				// Build menus
 				d3.select('#x-axis-menu').selectAll('li').data(xAxisOptions)
 						.enter().append('li').text(function(d) {
-							return d;
+							return descriptions[d];
 						}).classed('selected', function(d) {
 							return d === xAxis;
 						}).on('click', function(d) {
@@ -70,7 +85,7 @@ function initDegreeDayChart(zone, year) {
 
 				d3.select('#category-menu').selectAll('li').data(
 						categoryOptions).enter().append('li').text(function(d) {
-					return d;
+					return descriptions[d];
 				}).classed('selected', function(d) {
 					return d === pointCategory;
 				}).on('click', function(d) {
@@ -129,7 +144,7 @@ function initDegreeDayChart(zone, year) {
 							return color(d[pointCategory]);
 						});
 
-				updateChart(true);
+				updateChart();
 				updateMenus();
 
 				// Render axes
@@ -141,9 +156,10 @@ function initDegreeDayChart(zone, year) {
 						'transform', 'translate(-10, 0)').call(makeYAxis);
 
 				// RENDERING FUNCTIONS
-				function updateChart(init) {
+				function updateChart() {
+					var color = d3.scale.category10(); // Reset colors
+					
 					updateScales();
-
 					d3.select('svg g.chart').selectAll('circle').transition()
 							.duration(1500).ease('quad-out').attr('cx',
 									function(d) {
@@ -158,13 +174,19 @@ function initDegreeDayChart(zone, year) {
 								} else {
 									return yScale(d[yAxis]);
 								}
-							}).attr('r', function(d) {
-								if (isNaN(d[xAxis]) || isNaN(d[yAxis]) || !_.contains(selectedDayFilters, d["dayOfWeek"])) {
-									return 0;
-								} else {
-									return 2;
-								}
-							}).attr('fill', function(d) {
+							}).attr(
+									'r',
+									function(d) {
+										if (isNaN(d[xAxis])
+												|| isNaN(d[yAxis])
+												|| !_.contains(
+														selectedDayFilters,
+														d["dayOfWeek"])) {
+											return 0;
+										} else {
+											return 2;
+										}
+									}).attr('fill', function(d) {
 								return color(d[pointCategory]);
 							});
 
@@ -174,24 +196,29 @@ function initDegreeDayChart(zone, year) {
 
 					// Update axis labels
 					d3.select('#xLabel').text(descriptions[xAxis]);
+					d3.select('#yLabel').text(descriptions[yAxis]);
 
 					// Update legend
-					var legend = svg.selectAll(".legend").data(color.domain())
-							.enter().append("g").attr("class", "legend").attr(
+					svg.selectAll(".legend").data([]).exit().remove();
+					var legend = svg.selectAll(".legend").data(color.domain());
+										
+					legend.enter().append("g").transition()
+				      .duration(0).attr("class", "legend").attr(
 									"transform", function(d, i) {
 										return "translate(0," + i * 20 + ")";
 									});
 
-					legend.append("rect").attr("x", 1000 - 18)
+					legend.append("rect").transition()
+				      .duration(0).attr("x", 1000 - 18)
 							.attr("width", 18).attr("height", 18).style("fill",
 									color);
 
-					legend.append("text").attr("x", 1000 - 24).attr("y", 9)
+					legend.append("text").transition()
+				      .duration(0).attr("x", 1000 - 24).attr("y", 9)
 							.attr("dy", ".35em").style("text-anchor", "end")
 							.text(function(d) {
-								return d;
+								return descriptions[d];
 							});
-
 				}
 
 				function updateScales() {
@@ -211,9 +238,12 @@ function initDegreeDayChart(zone, year) {
 				function makeYAxis(s) {
 					s.call(d3.svg.axis().scale(yScale).orient("left"));
 				}
+				
+				function updateLegend() {
+					
+				}
 
-				// Update 'selected' class in x-axis, color category, and filter
-				// menus
+				// Update 'selected' class in menus
 				function updateMenus() {
 					d3.select('#x-axis-menu').selectAll('li').classed(
 							'selected', function(d) {
