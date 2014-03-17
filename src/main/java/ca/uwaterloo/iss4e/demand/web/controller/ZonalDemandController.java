@@ -53,6 +53,16 @@ public class ZonalDemandController implements ApplicationContextAware {
 		zoneStrings.add("West");
 		model.addAttribute("zoneStrings", zoneStrings);
 		
+		List<String> dayFilters = new ArrayList<String>(7);
+		dayFilters.add("Monday");
+		dayFilters.add("Tuesday");
+		dayFilters.add("Wednesday");
+		dayFilters.add("Thursday");
+		dayFilters.add("Friday");
+		dayFilters.add("Saturday");
+		dayFilters.add("Sunday");
+		model.addAttribute("dayFilters", dayFilters);
+		
 		model.addAttribute("year", year);
 		model.addAttribute("zoneString", zoneString);
 		model.addAttribute("command", command);

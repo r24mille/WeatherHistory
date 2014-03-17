@@ -7,7 +7,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>${command.zoneString} Zone, ${command.year}</title>
+<title>${zoneString} Zone, ${year}</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width">
 
@@ -27,6 +27,8 @@
 			<ul id="x-axis-menu"></ul>
 			<h3>Color Category</h3>
 			<ul id="category-menu"></ul>
+			<h3>Day Filters</h3>
+			<ul id="day-filter-menu"></ul>
 			<h3>Year</h3>
 			<ul>
 				<c:forEach items="${years}" var="loopYear">

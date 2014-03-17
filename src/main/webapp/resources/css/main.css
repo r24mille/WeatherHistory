@@ -36,6 +36,10 @@ div#menu ul li {
 	cursor: pointer;
 }
 
+div#menu ul li.selected {
+	font-weight: bold;
+}
+
 div#menu ul a {
 	text-decoration: none;
 	color: black;

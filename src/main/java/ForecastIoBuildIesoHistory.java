@@ -28,7 +28,7 @@ public class ForecastIoBuildIesoHistory {
 			.getBean("forecastIoApiKey4");
 	static int FORECAST_IO_LIMIT = 1000;
 	// Configure these each run
-	static TransmissionZone transmissionZone = TransmissionZone.NORTHEAST;
+	static TransmissionZone transmissionZone = TransmissionZone.OTTAWA;
 
 	public static void main(String[] args) throws InterruptedException {
 		Calendar startCal = Calendar.getInstance();
