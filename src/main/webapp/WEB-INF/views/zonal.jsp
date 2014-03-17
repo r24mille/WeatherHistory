@@ -7,7 +7,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>${zoneString} Transmission Zone Demand</title>
+<title>Transmission Zone Demand</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width">
 
@@ -25,32 +25,37 @@
 <body>
 	<div id="wrapper">
 		<div id="title">
-			<h1>${zoneString} Zone, <span class="demand-year"></span></h1>
+			<h1><span id="demand-zone">${zoneString}</span> Zone, <span class="demand-year"></span></h1>
 		</div>
 
 		<div id="menu">
-			<h3>X-Axis</h3>
+			<h3>Independent Variable</h3>
 			<ul id="x-axis-menu"></ul>
 			<h3>Color Category</h3>
 			<ul id="category-menu"></ul>
 			<div id="filter-menu">
-				<h3>Day Filters</h3>
+				<h3>Filter Days</h3>
 				<ul id="day-filter-menu">
 				</ul>
-				<h3>Season Filters</h3>
+				<h3>Filter Seasons</h3>
 				<ul id="season-filter-menu">
 				</ul>
-				<h3>Rate Filters</h3>
+				<h3>Filter Rates</h3>
 				<ul id="rate-filter-menu">
 				</ul>
 			</div>
-			<h3>Zone</h3>
-			<ul>
+			<h3>Transmission Zone</h3>
+			<ul id="zone-menu">
 				<c:forEach items="${zoneStrings}" var="loopZone">
-					<li><a
-						href="/WeatherHistory/zone/${loopZone}/year/${year}/html">${loopZone}</a>
+					<li>${loopZone}</li>
 				</c:forEach>
 			</ul>
+			<script>
+			$("#zone-menu li").click(function () {
+				$("#demand-zone").text($(this).text());
+				chartJSON($(this).text(), $("#year-slider").slider("value"));
+			});
+			</script>
 		</div>
 
 		<div id="chart"></div>
@@ -58,7 +63,8 @@
 		<div id="year-slider"></div>
 	</div>
 	<script>
-		initDegreeDayChart("${zoneString}");
+		initSlider("${zoneString}");
+		initChart("${zoneString}", 2013);
 	</script>
 </body>
 </html>
