@@ -40,21 +40,23 @@ div#menu {
 div#menu h3 {
 	margin: 0px;
 	padding: 0px;
+	border-bottom: 1px dashed black;
 }
 
 div#menu ul {
 	list-style: none;
-	margin: 5px 0px 5px 0px;
+	margin: 0px 0px 20px 0px;
 	padding: 0px;
 }
 
 div#menu ul li {
-	padding: 0px;
+	padding: 0px 0px 0px 20px;
 	margin: 0px 0px 5px 15px;
 	cursor: pointer;
 }
 
 div#menu ul li.selected {
+	background: url("../images/checkmark.png") no-repeat;
 	font-weight: bold;
 }
 

@@ -243,7 +243,7 @@ function chartData(data) {
 // RENDERING FUNCTIONS
 function updateChart(data) {
 	updateScales(data);
-	d3.select('svg g.chart').selectAll('circle').transition().duration(1500)
+	d3.select('svg g.chart').selectAll('circle').transition().duration(1250)
 			.ease('quad-out').attr('cx', function(d) {
 				if (isNaN(d[xAxis])) {
 					return d3.select(this).attr('cx');
@@ -284,17 +284,16 @@ function updateLegend() {
 	svg.selectAll(".legend").data([]).exit().remove();
 	var legend = svg.selectAll(".legend").data(_color.domain());
 
-	legend.enter().append("g").transition().duration(0).attr("class", "legend")
-			.attr("transform", function(d, i) {
+	legend.enter().append("g").attr("class", "legend").attr("transform",
+			function(d, i) {
 				return "translate(0," + i * 20 + ")";
 			});
 
-	legend.append("rect").transition().duration(0).attr("x", 1000 - 18).attr(
-			"width", 18).attr("height", 18).style("fill", _color);
+	legend.append("rect").attr("x", 1000 - 18).attr("width", 18).attr("height",
+			18).style("fill", _color);
 
-	legend.append("text").transition().duration(0).attr("x", 1000 - 24).attr(
-			"y", 9).attr("dy", ".35em").style("text-anchor", "end").text(
-			function(d) {
+	legend.append("text").attr("x", 1000 - 24).attr("y", 9).attr("dy", ".35em")
+			.style("text-anchor", "end").text(function(d) {
 				return descriptions[d];
 			});
 }

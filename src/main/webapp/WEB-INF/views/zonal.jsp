@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <!DOCTYPE html>
 <html class="no-js">
@@ -17,15 +18,21 @@
 <script src="/WeatherHistory/resources/js/interactive-degree-day.js"></script>
 <link rel="stylesheet" href="/WeatherHistory/resources/css/main.css"
 	type="text/css" />
-	 <link rel="stylesheet" href="/WeatherHistory/resources/css/vendor/ui-lightness/jquery-ui-1.10.4.custom.min.css">
+<link rel="stylesheet"
+	href="/WeatherHistory/resources/css/vendor/ui-lightness/jquery-ui-1.10.4.custom.min.css">
 
-<script src="/WeatherHistory/resources/js/vendor/jquery-ui-1.10.4.custom/jquery-1.10.2.js"></script>
-<script src="/WeatherHistory/resources/js/vendor/jquery-ui-1.10.4.custom/jquery-ui-1.10.4.custom.min.js"></script>
+<script
+	src="/WeatherHistory/resources/js/vendor/jquery-ui-1.10.4.custom/jquery-1.10.2.js"></script>
+<script
+	src="/WeatherHistory/resources/js/vendor/jquery-ui-1.10.4.custom/jquery-ui-1.10.4.custom.min.js"></script>
 </head>
 <body>
 	<div id="wrapper">
 		<div id="title">
-			<h1><span id="demand-zone">${zoneString}</span> Zone, <span class="demand-year"></span></h1>
+			<h1>
+				<span id="demand-zone">${zoneString}</span> Zone, <span
+					class="demand-year"></span>
+			</h1>
 		</div>
 
 		<div id="menu">
@@ -47,19 +54,32 @@
 			<h3>Transmission Zone</h3>
 			<ul id="zone-menu">
 				<c:forEach items="${zoneStrings}" var="loopZone">
-					<li>${loopZone}</li>
+					<c:choose>
+						<c:when test="${fn:toLowerCase(loopZone) == fn:toLowerCase(zoneString)}">
+							<li class="selected">${loopZone}</li>
+						</c:when>
+						<c:otherwise>
+							<li>${loopZone}</li>
+						</c:otherwise>
+					</c:choose>
 				</c:forEach>
 			</ul>
 			<script>
-			$("#zone-menu li").click(function () {
-				$("#demand-zone").text($(this).text());
-				chartJSON($(this).text(), $("#year-slider").slider("value"));
-			});
+				$("#zone-menu li").click(
+						function() {
+							$("#zone-menu li").removeClass("selected");
+							$("#demand-zone").text($(this).text());
+							chartJSON($(this).text(), $("#year-slider").slider(
+									"value"));
+							$(this).addClass("selected");
+						});
 			</script>
 		</div>
 
 		<div id="chart"></div>
-		<h2>Pick a year: <span class="demand-year"></span></h2>
+		<h2>
+			Pick a year: <span class="demand-year"></span>
+		</h2>
 		<div id="year-slider"></div>
 	</div>
 	<script>
