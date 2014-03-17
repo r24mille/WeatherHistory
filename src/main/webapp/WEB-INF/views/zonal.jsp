@@ -7,19 +7,25 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>${zoneString} Zone, ${year}</title>
+<title>${zoneString} Transmission Zone Demand</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width">
 
 <script src="/WeatherHistory/resources/js/vendor/d3/d3.min.js"></script>
-<script src="/WeatherHistory/resources/js/vendor/underscore-1.6.0/underscore-min.js"></script>
+<script
+	src="/WeatherHistory/resources/js/vendor/underscore-1.6.0/underscore-min.js"></script>
 <script src="/WeatherHistory/resources/js/interactive-degree-day.js"></script>
-<link rel="stylesheet" href="/WeatherHistory/resources/css/main.css" type="text/css" />
+<link rel="stylesheet" href="/WeatherHistory/resources/css/main.css"
+	type="text/css" />
+	 <link rel="stylesheet" href="/WeatherHistory/resources/css/vendor/ui-lightness/jquery-ui-1.10.4.custom.min.css">
+
+<script src="/WeatherHistory/resources/js/vendor/jquery-ui-1.10.4.custom/jquery-1.10.2.js"></script>
+<script src="/WeatherHistory/resources/js/vendor/jquery-ui-1.10.4.custom/jquery-ui-1.10.4.custom.min.js"></script>
 </head>
 <body>
 	<div id="wrapper">
 		<div id="title">
-			<h1>${zoneString} Zone, ${year}</h1>
+			<h1>${zoneString} Zone, <span class="demand-year"></span></h1>
 		</div>
 
 		<div id="menu">
@@ -38,24 +44,21 @@
 				<ul id="rate-filter-menu">
 				</ul>
 			</div>
-			<h3>Year</h3>
-			<ul>
-				<c:forEach items="${years}" var="loopYear">
-					<li><a href="/WeatherHistory/zone/${zoneString}/year/${loopYear}/html">${loopYear}</a>
-				</c:forEach>
-			</ul>
 			<h3>Zone</h3>
 			<ul>
-			<c:forEach items="${zoneStrings}" var="loopZone">
-				<li><a href="/WeatherHistory/zone/${loopZone}/year/${year}/html">${loopZone}</a>
-			</c:forEach>
+				<c:forEach items="${zoneStrings}" var="loopZone">
+					<li><a
+						href="/WeatherHistory/zone/${loopZone}/year/${year}/html">${loopZone}</a>
+				</c:forEach>
 			</ul>
 		</div>
-		
+
 		<div id="chart"></div>
+		<h2>Pick a year: <span class="demand-year"></span></h2>
+		<div id="year-slider"></div>
 	</div>
 	<script>
- 		initDegreeDayChart("${zoneString}", "${year}");
+		initDegreeDayChart("${zoneString}");
 	</script>
 </body>
 </html>

@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,24 +21,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandAndWeatherDAO;
 import ca.uwaterloo.iss4e.demand.model.ieso.TransmissionZone;
 import ca.uwaterloo.iss4e.demand.model.ieso.ZonalDemandAndWeather;
-import ca.uwaterloo.iss4e.demand.web.command.ZonalDemandCommand;
 
 @Controller
-@RequestMapping("/zone/{zoneString}/year/{year}/**")
+@RequestMapping("/zone/{zoneString}/**")
 public class ZonalDemandController implements ApplicationContextAware {
 	Logger logger = LogManager.getLogger(this.getClass());
 	private ApplicationContext applicationContext;
 
 	@RequestMapping("/html")
-	public String html(@ModelAttribute ZonalDemandCommand command,
-			@PathVariable String zoneString, @PathVariable Integer year,
-			Model model) {
-		List<Integer> years = new ArrayList<Integer>(11);
-		for (int i = 2003; i <= 2013; i++) {
-			years.add(i);
-		}
-		model.addAttribute("years", years);
-		
+	public String html(@PathVariable String zoneString, Model model) {		
 		List<String> zoneStrings = new ArrayList<String>(10);
 		zoneStrings.add("Bruce");
 		zoneStrings.add("East");
@@ -53,23 +43,11 @@ public class ZonalDemandController implements ApplicationContextAware {
 		zoneStrings.add("West");
 		model.addAttribute("zoneStrings", zoneStrings);
 		
-		List<String> dayFilters = new ArrayList<String>(7);
-		dayFilters.add("Monday");
-		dayFilters.add("Tuesday");
-		dayFilters.add("Wednesday");
-		dayFilters.add("Thursday");
-		dayFilters.add("Friday");
-		dayFilters.add("Saturday");
-		dayFilters.add("Sunday");
-		model.addAttribute("dayFilters", dayFilters);
-		
-		model.addAttribute("year", year);
 		model.addAttribute("zoneString", zoneString);
-		model.addAttribute("command", command);
 		return "zonal";
 	}
 
-	@RequestMapping(value = "/json", method = RequestMethod.GET)
+	@RequestMapping(value = "/year/{year}/json", method = RequestMethod.GET)
 	public @ResponseBody
 	List<ZonalDemandAndWeather> zoneJson(@PathVariable String zoneString,
 			@PathVariable Integer year) {

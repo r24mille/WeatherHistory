@@ -19,7 +19,21 @@ function getBounds(d, paddingFactor) {
 	return b;
 }
 
-function initDegreeDayChart(zone, year) {
+function initDegreeDayChart(zone) {
+	// Setup up JQuery-UI slider
+	$("#year-slider").slider({
+		range : "min",
+		value : 2013,
+		min : 2004,
+		max : 2013,
+		slide : function(event, ui) {
+			$(".demand-year").text(ui.value);
+			chartJSON(zone, ui.value);
+		}
+	});
+	$(".demand-year").text($("#year-slider").slider("value"));
+	chartJSON(zone, $("#year-slider").slider("value"));
+
 	// Set up default x-axis, y-axis, and color categories
 	var xAxis = "tempMetric", yAxis = "demand", pointCategory = "timeOfUseRate";
 
@@ -66,235 +80,325 @@ function initDegreeDayChart(zone, year) {
 			"height", 700);
 	var xScale, yScale;
 	svg.append('g').classed('chart', true).attr('transform',
-			'translate(85, -95)');
+			'translate(90, -100)');
 
-	// Make call for JSON data
-	d3.json("/WeatherHistory/zone/" + zone + "/year/" + year + "/json",
-			function(data) {
-				var keys = _.keys(data[0]);
-				var bounds = getBounds(data, 1);
+	function chartJSON(zone, year) {
+		// Make call for JSON data
+		d3
+				.json(
+						"/WeatherHistory/zone/" + zone + "/year/" + year
+								+ "/json",
+						function(data) {
+							var keys = _.keys(data[0]);
+							var bounds = getBounds(data, 1);
 
-				// Build menus
-				d3.select('#x-axis-menu').selectAll('li').data(xAxisOptions)
-						.enter().append('li').text(function(d) {
-							return descriptions[d];
-						}).classed('selected', function(d) {
-							return d === xAxis;
-						}).on('click', function(d) {
-							xAxis = d;
-							updateChart();
-							updateMenus();
-						});
-
-				d3.select('#category-menu').selectAll('li').data(
-						categoryOptions).enter().append('li').text(function(d) {
-					return descriptions[d];
-				}).classed('selected', function(d) {
-					return d === pointCategory;
-				}).on('click', function(d) {
-					pointCategory = d;
-					updateChart();
-					updateMenus();
-				});
-
-				d3.select('#day-filter-menu').selectAll('li').data(
-						dayFilterOptions).enter().append('li').text(
-						function(d) {
-							return d;
-						}).classed('selected', function(d) {
-					return _.contains(selectedFilters, d);
-				}).on('click', function(d) {
-					// Toggle filters
-					if (_.contains(selectedFilters, d)) {
-						var filterIndex = _.indexOf(selectedFilters, d);
-						selectedFilters.splice(filterIndex, 1);
-					} else {
-						selectedFilters.push(d);
-					}
-					updateChart();
-					updateMenus();
-				});
-
-				d3.select('#season-filter-menu').selectAll('li').data(
-						seasonFilterOptions).enter().append('li').text(
-						function(d) {
-							return descriptions[d];
-						}).classed('selected', function(d) {
-					return _.contains(selectedFilters, d);
-				}).on('click', function(d) {
-					// Toggle filters
-					if (_.contains(selectedFilters, d)) {
-						var filterIndex = _.indexOf(selectedFilters, d);
-						selectedFilters.splice(filterIndex, 1);
-					} else {
-						selectedFilters.push(d);
-					}
-					updateChart();
-					updateMenus();
-				});
-
-				d3.select('#rate-filter-menu').selectAll('li').data(
-						rateFilterOptions).enter().append('li').text(
-						function(d) {
-							return descriptions[d];
-						}).classed('selected', function(d) {
-					return _.contains(selectedFilters, d);
-				}).on('click', function(d) {
-					// Toggle filters
-					if (_.contains(selectedFilters, d)) {
-						var filterIndex = _.indexOf(selectedFilters, d);
-						selectedFilters.splice(filterIndex, 1);
-					} else {
-						selectedFilters.push(d);
-					}
-					updateChart();
-					updateMenus();
-				});
-
-				// Axis labels
-				d3.select('svg g.chart').append('text').attr({
-					'id' : 'xLabel',
-					'x' : 400,
-					'y' : 670,
-					'text-anchor' : 'middle'
-				}).text(descriptions[xAxis]);
-
-				d3.select('svg g.chart').append('text').attr('transform',
-						'translate(-60, 330)rotate(-90)').attr({
-					'id' : 'yLabel',
-					'text-anchor' : 'middle'
-				}).text(yAxis);
-
-				// Render points
-				updateScales();
-				var color = d3.scale.category10();
-				d3.select('svg g.chart').selectAll('circle').data(data).enter()
-						.append('circle').attr(
-								'cx',
-								function(d) {
-									return isNaN(d[xAxis]) ? d3.select(this)
-											.attr('cx') : xScale(d[xAxis]);
-								}).attr(
-								'cy',
-								function(d) {
-									return isNaN(d[yAxis]) ? d3.select(this)
-											.attr('cy') : yScale(d[yAxis]);
-								}).attr('fill', function(d) {
-							return color(d[pointCategory]);
-						});
-
-				updateChart();
-				updateMenus();
-
-				// Render axes
-				d3.select('svg g.chart').append("g").attr('transform',
-						'translate(0, 630)').attr('id', 'xAxis')
-						.call(makeXAxis);
-
-				d3.select('svg g.chart').append("g").attr('id', 'yAxis').attr(
-						'transform', 'translate(-10, 0)').call(makeYAxis);
-
-				// RENDERING FUNCTIONS
-				function updateChart() {
-					var color = d3.scale.category10(); // Reset colors
-
-					updateScales();
-					d3.select('svg g.chart').selectAll('circle').transition()
-							.duration(1500).ease('quad-out').attr('cx',
+							// Build menus
+							d3.select('#x-axis-menu').selectAll('li').data(
+									xAxisOptions).enter().append('li').text(
 									function(d) {
-										if (isNaN(d[xAxis])) {
-											return d3.select(this).attr('cx');
-										} else {
-											return xScale(d[xAxis]);
-										}
-									}).attr('cy', function(d) {
-								if (isNaN(d[yAxis])) {
-									return d3.select(this).attr('cy');
-								} else {
-									return yScale(d[yAxis]);
-								}
-							}).attr(
-									'r',
+										return descriptions[d];
+									}).classed('selected', function(d) {
+								return d === xAxis;
+							}).on('click', function(d) {
+								xAxis = d;
+								updateChart();
+								updateMenus();
+							});
+
+							d3.select('#category-menu').selectAll('li').data(
+									categoryOptions).enter().append('li').text(
 									function(d) {
-										if (isNaN(d[xAxis])
-												|| isNaN(d[yAxis])
-												|| !_.contains(selectedFilters,
-														d["dayOfWeek"])
-												|| !_.contains(selectedFilters,
-														d["timeOfUseSeason"])
-												|| !_.contains(selectedFilters,
-														d["timeOfUseRate"])) {
-											return 0;
-										} else {
-											return 2;
-										}
+										return descriptions[d];
+									}).classed('selected', function(d) {
+								return d === pointCategory;
+							}).on('click', function(d) {
+								pointCategory = d;
+								updateChart();
+								updateMenus();
+							});
+
+							d3
+									.select('#day-filter-menu')
+									.selectAll('li')
+									.data(dayFilterOptions)
+									.enter()
+									.append('li')
+									.text(function(d) {
+										return d;
+									})
+									.classed('selected', function(d) {
+										return _.contains(selectedFilters, d);
+									})
+									.on(
+											'click',
+											function(d) {
+												// Toggle filters
+												if (_.contains(selectedFilters,
+														d)) {
+													var filterIndex = _
+															.indexOf(
+																	selectedFilters,
+																	d);
+													selectedFilters.splice(
+															filterIndex, 1);
+												} else {
+													selectedFilters.push(d);
+												}
+												updateChart();
+												updateMenus();
+											});
+
+							d3
+									.select('#season-filter-menu')
+									.selectAll('li')
+									.data(seasonFilterOptions)
+									.enter()
+									.append('li')
+									.text(function(d) {
+										return descriptions[d];
+									})
+									.classed('selected', function(d) {
+										return _.contains(selectedFilters, d);
+									})
+									.on(
+											'click',
+											function(d) {
+												// Toggle filters
+												if (_.contains(selectedFilters,
+														d)) {
+													var filterIndex = _
+															.indexOf(
+																	selectedFilters,
+																	d);
+													selectedFilters.splice(
+															filterIndex, 1);
+												} else {
+													selectedFilters.push(d);
+												}
+												updateChart();
+												updateMenus();
+											});
+
+							d3
+									.select('#rate-filter-menu')
+									.selectAll('li')
+									.data(rateFilterOptions)
+									.enter()
+									.append('li')
+									.text(function(d) {
+										return descriptions[d];
+									})
+									.classed('selected', function(d) {
+										return _.contains(selectedFilters, d);
+									})
+									.on(
+											'click',
+											function(d) {
+												// Toggle filters
+												if (_.contains(selectedFilters,
+														d)) {
+													var filterIndex = _
+															.indexOf(
+																	selectedFilters,
+																	d);
+													selectedFilters.splice(
+															filterIndex, 1);
+												} else {
+													selectedFilters.push(d);
+												}
+												updateChart();
+												updateMenus();
+											});
+
+							// Axis labels
+							d3.select('svg g.chart').append('text').attr({
+								'id' : 'xLabel',
+								'x' : 400,
+								'y' : 670,
+								'text-anchor' : 'middle'
+							}).text(descriptions[xAxis]);
+
+							d3.select('svg g.chart').append('text').attr(
+									'transform',
+									'translate(-60, 330)rotate(-90)').attr({
+								'id' : 'yLabel',
+								'text-anchor' : 'middle'
+							}).text(yAxis);
+
+							// Render points
+							updateScales();
+							var color = d3.scale.category10();
+							d3.select('svg g.chart').selectAll('circle').data(
+									data).enter().append('circle').attr(
+									'cx',
+									function(d) {
+										return isNaN(d[xAxis]) ? d3
+												.select(this).attr('cx')
+												: xScale(d[xAxis]);
+									}).attr(
+									'cy',
+									function(d) {
+										return isNaN(d[yAxis]) ? d3
+												.select(this).attr('cy')
+												: yScale(d[yAxis]);
 									}).attr('fill', function(d) {
 								return color(d[pointCategory]);
 							});
 
-					// Also update the axes
-					d3.select('#xAxis').transition().call(makeXAxis);
-					d3.select('#yAxis').transition().call(makeYAxis);
+							updateChart();
+							updateMenus();
 
-					// Update axis labels
-					d3.select('#xLabel').text(descriptions[xAxis]);
-					d3.select('#yLabel').text(descriptions[yAxis]);
+							// Render axes
+							d3.select('svg g.chart').append("g").attr(
+									'transform', 'translate(0, 630)').attr(
+									'id', 'xAxis').call(makeXAxis);
 
-					// Update legend
-					svg.selectAll(".legend").data([]).exit().remove();
-					var legend = svg.selectAll(".legend").data(color.domain());
+							d3.select('svg g.chart').append("g").attr('id',
+									'yAxis').attr('transform',
+									'translate(-10, 0)').call(makeYAxis);
 
-					legend.enter().append("g").transition().duration(0).attr(
-							"class", "legend").attr("transform",
-							function(d, i) {
-								return "translate(0," + i * 20 + ")";
-							});
+							// RENDERING FUNCTIONS
+							function updateChart() {
+								// Reset category and legend colors
+								var color = d3.scale.category10();
 
-					legend.append("rect").transition().duration(0).attr("x",
-							1000 - 18).attr("width", 18).attr("height", 18)
-							.style("fill", color);
+								updateScales();
+								d3
+										.select('svg g.chart')
+										.selectAll('circle')
+										.transition()
+										.duration(1500)
+										.ease('quad-out')
+										.attr(
+												'cx',
+												function(d) {
+													if (isNaN(d[xAxis])) {
+														return d3.select(this)
+																.attr('cx');
+													} else {
+														return xScale(d[xAxis]);
+													}
+												})
+										.attr(
+												'cy',
+												function(d) {
+													if (isNaN(d[yAxis])) {
+														return d3.select(this)
+																.attr('cy');
+													} else {
+														return yScale(d[yAxis]);
+													}
+												})
+										.attr(
+												'r',
+												function(d) {
+													if (isNaN(d[xAxis])
+															|| isNaN(d[yAxis])
+															|| !_
+																	.contains(
+																			selectedFilters,
+																			d["dayOfWeek"])
+															|| !_
+																	.contains(
+																			selectedFilters,
+																			d["timeOfUseSeason"])
+															|| !_
+																	.contains(
+																			selectedFilters,
+																			d["timeOfUseRate"])) {
+														return 0;
+													} else {
+														return 2;
+													}
+												}).attr('fill', function(d) {
+											return color(d[pointCategory]);
+										});
 
-					legend.append("text").transition().duration(0).attr("x",
-							1000 - 24).attr("y", 9).attr("dy", ".35em").style(
-							"text-anchor", "end").text(function(d) {
-						return descriptions[d];
-					});
-				}
+								// Also update the axes
+								d3.select('#xAxis').transition()
+										.call(makeXAxis);
+								d3.select('#yAxis').transition()
+										.call(makeYAxis);
 
-				function updateScales() {
-					xScale = d3.scale.linear().domain(
-							[ bounds[xAxis].min, bounds[xAxis].max ]).range(
-							[ 20, 780 ]);
+								// Update axis labels
+								d3.select('#xLabel').text(descriptions[xAxis]);
+								d3.select('#yLabel').text(descriptions[yAxis]);
 
-					yScale = d3.scale.linear().domain(
-							[ bounds[yAxis].min, bounds[yAxis].max ]).range(
-							[ 600, 100 ]);
-				}
+								// Update legend
+								svg.selectAll(".legend").data([]).exit()
+										.remove();
+								var legend = svg.selectAll(".legend").data(
+										color.domain());
 
-				function makeXAxis(s) {
-					s.call(d3.svg.axis().scale(xScale).orient("bottom"));
-				}
+								legend.enter().append("g").transition()
+										.duration(0).attr("class", "legend")
+										.attr(
+												"transform",
+												function(d, i) {
+													return "translate(0," + i
+															* 20 + ")";
+												});
 
-				function makeYAxis(s) {
-					s.call(d3.svg.axis().scale(yScale).orient("left"));
-				}
+								legend.append("rect").transition().duration(0)
+										.attr("x", 1000 - 18).attr("width", 18)
+										.attr("height", 18)
+										.style("fill", color);
 
-				// Update 'selected' class in menus
-				function updateMenus() {
-					d3.select('#x-axis-menu').selectAll('li').classed(
-							'selected', function(d) {
-								return d === xAxis;
-							});
-					d3.select('#category-menu').selectAll('li').classed(
-							'selected', function(d) {
-								return d === pointCategory;
-							});
+								legend.append("text").transition().duration(0)
+										.attr("x", 1000 - 24).attr("y", 9)
+										.attr("dy", ".35em").style(
+												"text-anchor", "end").text(
+												function(d) {
+													return descriptions[d];
+												});
+							}
 
-					d3.select('#filter-menu').selectAll('li').classed(
-							'selected', function(d) {
-								return _.contains(selectedFilters, d);
-							});
-				}
+							function updateScales() {
+								xScale = d3.scale.linear()
+										.domain(
+												[ bounds[xAxis].min,
+														bounds[xAxis].max ])
+										.range([ 20, 780 ]);
 
-			});
+								yScale = d3.scale.linear()
+										.domain(
+												[ bounds[yAxis].min,
+														bounds[yAxis].max ])
+										.range([ 600, 100 ]);
+							}
+
+							function makeXAxis(s) {
+								s.call(d3.svg.axis().scale(xScale).orient(
+										"bottom"));
+							}
+
+							function makeYAxis(s) {
+								s.call(d3.svg.axis().scale(yScale).orient(
+										"left"));
+							}
+
+							// Update 'selected' class in menus
+							function updateMenus() {
+								d3.select('#x-axis-menu').selectAll('li')
+										.classed('selected', function(d) {
+											return d === xAxis;
+										});
+								d3.select('#category-menu').selectAll('li')
+										.classed('selected', function(d) {
+											return d === pointCategory;
+										});
+
+								d3
+										.select('#filter-menu')
+										.selectAll('li')
+										.classed(
+												'selected',
+												function(d) {
+													return _.contains(
+															selectedFilters, d);
+												});
+							}
+
+						});
+	}
 }
