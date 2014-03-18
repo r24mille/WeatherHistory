@@ -5,7 +5,7 @@ var xAxis, yAxis, pointCategory;
 var xAxisOptions, categoryOptions, dayFilterOptions, seasonFilterOptions, rateFilterOptions;
 var selectedFilters;
 var descriptions;
-var _data, svg, _color;
+var _zone, _data, svg, _color;
 
 function getBounds(d, paddingFactor) {
 	// Find min and maxes (for the scales)
@@ -32,6 +32,8 @@ function getBounds(d, paddingFactor) {
  * Initialize the JQuery-UI slider
  */
 function initSlider(zone) {
+	_zone = zone;
+	
 	$("#year-slider").slider({
 		range : "min",
 		value : 2013,
@@ -39,7 +41,7 @@ function initSlider(zone) {
 		max : 2013,
 		slide : function(event, ui) {
 			$(".demand-year").text(ui.value);
-			chartJSON(zone, ui.value);
+			chartJSON(_zone, ui.value);
 		}
 	});
 	$(".demand-year").text($("#year-slider").slider("value"));
@@ -195,8 +197,10 @@ function initChart(zone, year) {
 }
 
 function chartJSON(zone, year) {
+	_zone = zone;
+	
 	// Make call for JSON data
-	d3.json("/WeatherHistory/zone/" + zone + "/year/" + year + "/json",
+	d3.json("/WeatherHistory/zone/" + _zone + "/year/" + year + "/json",
 			function(data) {
 				_data = data;
 				chartData(data);
