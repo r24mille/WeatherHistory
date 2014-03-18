@@ -4,6 +4,7 @@
 var xAxis, yAxis, pointCategory;
 var xAxisOptions, categoryOptions, dayFilterOptions, seasonFilterOptions, rateFilterOptions;
 var selectedFilters;
+var _categoryValueMap = new Array();
 var descriptions;
 var _zone, _data, svg, _color;
 
@@ -33,7 +34,7 @@ function getBounds(d, paddingFactor) {
  */
 function initSlider(zone) {
 	_zone = zone;
-	
+
 	$("#year-slider").slider({
 		range : "min",
 		value : 2013,
@@ -57,10 +58,17 @@ function initChart(zone, year) {
 	xAxisOptions = [ "tempMetric", "wallHourNum" ];
 	categoryOptions = [ "timeOfUseRate", "timeOfUseSeason", "weekend",
 			"dayOfWeek" ];
+	rateFilterOptions = [ "OFF_PEAK", "MID_PEAK", "ON_PEAK" ];
+	seasonFilterOptions = [ "SUMMER", "WINTER" ];
+	weekendFilterOptions = [ "true", "false" ];
 	dayFilterOptions = [ "Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday" ];
-	seasonFilterOptions = [ "SUMMER", "WINTER" ];
-	rateFilterOptions = [ "OFF_PEAK", "MID_PEAK", "ON_PEAK" ];
+	
+	// Map all category values so that color/legend remains consistent
+	_categoryValueMap["timeOfUseRate"] = rateFilterOptions;
+	_categoryValueMap["timeOfUseSeason"] = seasonFilterOptions;
+	_categoryValueMap["weekend"] = weekendFilterOptions;
+	_categoryValueMap["dayOfWeek"] = dayFilterOptions;
 
 	// Initialize all filters to be selected
 	selectedFilters = [].concat(dayFilterOptions, seasonFilterOptions,
@@ -90,7 +98,11 @@ function initChart(zone, year) {
 		"Saturday" : "Saturday"
 	};
 
+	// Initialize all colors for category
 	_color = d3.scale.category10();
+	_.each(_categoryValueMap[pointCategory], function(d) {
+		_color(d);
+	});
 
 	// Initialize the SVG chart object
 	svg = d3.select("#chart").append("svg").attr("width", 1200).attr("height",
@@ -119,7 +131,13 @@ function initChart(zone, year) {
 				return d === pointCategory;
 			}).on('click', function(d) {
 				pointCategory = d;
+				
+				// Initialize all colors for category
 				_color = d3.scale.category10();
+				_.each(_categoryValueMap[pointCategory], function(d) {
+					_color(d);
+				});
+				
 				updateChart(_data);
 				updateMenus();
 				updateLegend();
@@ -198,7 +216,7 @@ function initChart(zone, year) {
 
 function chartJSON(zone, year) {
 	_zone = zone;
-	
+
 	// Make call for JSON data
 	d3.json("/WeatherHistory/zone/" + _zone + "/year/" + year + "/json",
 			function(data) {
@@ -222,7 +240,13 @@ function chartJSON(zone, year) {
 function chartData(data) {
 	// Render points
 	updateScales(data);
+
+	// Initialize all colors for category
 	_color = d3.scale.category10();
+	_.each(_categoryValueMap[pointCategory], function(d) {
+		_color(d);
+	});
+
 	$("#xAxis").remove();
 	$("#yAxis").remove();
 	var circles = d3.select('svg g.chart').selectAll('circle').data(data);
