@@ -11,12 +11,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.uwaterloo.iss4e.demand.dao.ieso.ZonalDemandAndWeatherDAO;
 import ca.uwaterloo.iss4e.demand.model.ieso.TransmissionZone;
@@ -29,7 +31,7 @@ public class ZonalDemandController implements ApplicationContextAware {
 	private ApplicationContext applicationContext;
 
 	@RequestMapping("/html")
-	public String html(@PathVariable String zoneString, Model model) {		
+	public String html(@PathVariable String zoneString, Model model) {
 		List<String> zoneStrings = new ArrayList<String>(10);
 		zoneStrings.add("Bruce");
 		zoneStrings.add("East");
@@ -42,15 +44,14 @@ public class ZonalDemandController implements ApplicationContextAware {
 		zoneStrings.add("Toronto");
 		zoneStrings.add("West");
 		model.addAttribute("zoneStrings", zoneStrings);
-		
+
 		model.addAttribute("zoneString", zoneString);
 		return "zonal";
 	}
 
 	@RequestMapping(value = "/year/{year}/json", method = RequestMethod.GET)
-	public @ResponseBody
-	List<ZonalDemandAndWeather> zoneJson(@PathVariable String zoneString,
-			@PathVariable Integer year) {
+	public ResponseEntity<List<ZonalDemandAndWeather>> zoneJson(
+			@PathVariable String zoneString, @PathVariable Integer year) {
 		ZonalDemandAndWeatherDAO zonalDemandAndWeatherDAO = (ZonalDemandAndWeatherDAO) applicationContext
 				.getBean("zonalDemandAndWeatherDAO");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -71,7 +72,11 @@ public class ZonalDemandController implements ApplicationContextAware {
 			e.printStackTrace();
 		}
 
-		return zonalDemandAndWeathers;
+		// Attempt to mark JSON content cacheable to client since it doesn't change often
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set("cache-control", "public, max-age=3600");
+		
+		return new ResponseEntity<List<ZonalDemandAndWeather>>(zonalDemandAndWeathers, responseHeaders, HttpStatus.CREATED);
 	}
 
 	@Override
