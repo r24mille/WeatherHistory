@@ -44,6 +44,9 @@
 				<h3>Filter Days</h3>
 				<ul id="day-filter-menu">
 				</ul>
+				<h3>Filter Hours</h3>
+				<ul id="hour-filter-menu">
+				</ul>
 				<h3>Filter Seasons</h3>
 				<ul id="season-filter-menu">
 				</ul>

@@ -57,21 +57,25 @@ function initChart(zone, year) {
 	// Define all available x-axis options and color categories
 	xAxisOptions = [ "tempMetric", "wallHourNum" ];
 	categoryOptions = [ "timeOfUseRate", "timeOfUseSeason", "weekend",
-			"dayOfWeek" ];
+			"dayOfWeek", "wallHourNum" ];
 	rateFilterOptions = [ "OFF_PEAK", "MID_PEAK", "ON_PEAK" ];
 	seasonFilterOptions = [ "SUMMER", "WINTER" ];
 	weekendFilterOptions = [ "true", "false" ];
 	dayFilterOptions = [ "Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday" ];
+	hourFilterOptions = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+			21, 22, 23 ];
 
 	// Map all category values so that color/legend remains consistent
 	_categoryValueMap["timeOfUseRate"] = rateFilterOptions;
 	_categoryValueMap["timeOfUseSeason"] = seasonFilterOptions;
 	_categoryValueMap["weekend"] = weekendFilterOptions;
 	_categoryValueMap["dayOfWeek"] = dayFilterOptions;
+	_categoryValueMap["wallHourNum"] = hourFilterOptions;
 
 	// Initialize all filters to be selected
-	selectedFilters = [].concat(dayFilterOptions, seasonFilterOptions,
+	selectedFilters = [].concat(dayFilterOptions, hourFilterOptions, seasonFilterOptions,
 			rateFilterOptions);
 	// Verbose descriptions of axis and category options
 	descriptions = {
@@ -80,7 +84,8 @@ function initChart(zone, year) {
 		"timeOfUseRate" : "Time-of-Use daily price periods",
 		"timeOfUseSeason" : "Time-of-Use seasons",
 		"weekend" : "Weekend",
-		"dayOfWeek" : "Day of the week",
+		"dayOfWeek" : "Day of week",
+		"wallHourNum" : "Hour of day", 
 		"demand" : "Electricity Demand (MW)",
 		"true" : "Weekend",
 		"false" : "Weekday",
@@ -95,7 +100,31 @@ function initChart(zone, year) {
 		"Wednesday" : "Wednesday",
 		"Thursday" : "Thursday",
 		"Friday" : "Friday",
-		"Saturday" : "Saturday"
+		"Saturday" : "Saturday",
+		0 : "00:00 - 01:00",
+		1 : "01:00 - 02:00",
+		2 : "02:00 - 03:00",
+		3 : "03:00 - 04:00",
+		4 : "04:00 - 05:00",
+		5 : "05:00 - 06:00",
+		6 : "06:00 - 07:00",
+		7 : "07:00 - 08:00",
+		8 : "08:00 - 09:00",
+		9 : "09:00 - 10:00",
+		10 : "10:00 - 11:00",
+		11 : "11:00 - 12:00",
+		12 : "12:00 - 13:00",
+		13 : "13:00 - 14:00",
+		14 : "14:00 - 15:00",
+		15 : "15:00 - 16:00",
+		16 : "16:00 - 17:00",
+		17 : "17:00 - 18:00",
+		18 : "18:00 - 19:00",
+		19 : "19:00 - 20:00",
+		20 : "20:00 - 21:00",
+		21 : "21:00 - 22:00",
+		22 : "22:00 - 23:00",
+		23 : "23:00 - 00:00"
 	};
 
 	// Initialize all colors for category
@@ -146,6 +175,23 @@ function initChart(zone, year) {
 	d3.select('#day-filter-menu').selectAll('li').data(dayFilterOptions)
 			.enter().append('li').text(function(d) {
 				return d;
+			}).classed('selected', function(d) {
+				return _.contains(selectedFilters, d);
+			}).on('click', function(d) {
+				// Toggle filters
+				if (_.contains(selectedFilters, d)) {
+					var filterIndex = _.indexOf(selectedFilters, d);
+					selectedFilters.splice(filterIndex, 1);
+				} else {
+					selectedFilters.push(d);
+				}
+				updateChart(_data);
+				updateMenus();
+			});
+
+	d3.select('#hour-filter-menu').selectAll('li').data(hourFilterOptions)
+			.enter().append('li').text(function(d) {
+				return descriptions[d];
 			}).classed('selected', function(d) {
 				return _.contains(selectedFilters, d);
 			}).on('click', function(d) {
@@ -273,8 +319,7 @@ function chartData(data) {
 // RENDERING FUNCTIONS
 function updateChart(data) {
 	updateScales(data);
-	d3.select('svg g.chart').selectAll('circle').transition().duration(1250)
-			.ease('quad-out').attr('cx', function(d) {
+	d3.select('svg g.chart').selectAll('circle').attr('cx', function(d) {
 				if (isNaN(d[xAxis])) {
 					return d3.select(this).attr('cx');
 				} else {
@@ -295,7 +340,9 @@ function updateChart(data) {
 								|| !_.contains(selectedFilters,
 										d["timeOfUseSeason"])
 								|| !_.contains(selectedFilters,
-										d["timeOfUseRate"])) {
+										d["timeOfUseRate"])
+								|| !_.contains(selectedFilters,
+										d["wallHourNum"])) {
 							return 0;
 						} else {
 							return 2;

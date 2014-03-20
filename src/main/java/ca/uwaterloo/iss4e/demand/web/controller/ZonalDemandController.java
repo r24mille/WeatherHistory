@@ -33,7 +33,14 @@ public class ZonalDemandController implements ApplicationContextAware {
 
 	@RequestMapping("/html")
 	public String html(@PathVariable String zoneString, Model model) {
-		List<String> zoneStrings = new ArrayList<String>(10);
+		
+		List<Integer> hours = new ArrayList<Integer>(24);
+		for (int i = 0; i < 24; i++) {
+			hours.add(i);
+		}
+		model.addAttribute("hours", hours);
+		
+		List<String> zoneStrings = new ArrayList<String>(11);
 		zoneStrings.add("Total Ontario");
 		zoneStrings.add("Bruce");
 		zoneStrings.add("East");
@@ -46,7 +53,6 @@ public class ZonalDemandController implements ApplicationContextAware {
 		zoneStrings.add("Toronto");
 		zoneStrings.add("West");
 		model.addAttribute("zoneStrings", zoneStrings);
-
 		model.addAttribute("zoneString", zoneString);
 		return "zonal";
 	}
