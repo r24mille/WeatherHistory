@@ -34,6 +34,7 @@ public class ZonalDemandController implements ApplicationContextAware {
 	@RequestMapping("/html")
 	public String html(@PathVariable String zoneString, Model model) {
 		List<String> zoneStrings = new ArrayList<String>(10);
+		zoneStrings.add("Total Ontario");
 		zoneStrings.add("Bruce");
 		zoneStrings.add("East");
 		zoneStrings.add("Essa");
@@ -57,7 +58,7 @@ public class ZonalDemandController implements ApplicationContextAware {
 				.getBean("zonalDemandAndWeatherDAO");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		TransmissionZone transmissionZone = TransmissionZone.valueOf(zoneString
-				.toUpperCase());
+				.toUpperCase().replace(" ", "_"));
 
 		List<ZonalDemandAndWeather> zonalDemandAndWeathers = null;
 		try {
