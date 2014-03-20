@@ -63,7 +63,7 @@ function initChart(zone, year) {
 	weekendFilterOptions = [ "true", "false" ];
 	dayFilterOptions = [ "Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday" ];
-	
+
 	// Map all category values so that color/legend remains consistent
 	_categoryValueMap["timeOfUseRate"] = rateFilterOptions;
 	_categoryValueMap["timeOfUseSeason"] = seasonFilterOptions;
@@ -131,13 +131,13 @@ function initChart(zone, year) {
 				return d === pointCategory;
 			}).on('click', function(d) {
 				pointCategory = d;
-				
+
 				// Initialize all colors for category
 				_color = d3.scale.category10();
 				_.each(_categoryValueMap[pointCategory], function(d) {
 					_color(d);
 				});
-				
+
 				updateChart(_data);
 				updateMenus();
 				updateLegend();
@@ -218,23 +218,25 @@ function chartJSON(zone, year) {
 	_zone = zone;
 
 	// Make call for JSON data
-	d3.json("/WeatherHistory/zone/" + _zone + "/year/" + year + "/json",
-			function(data) {
-				_data = data;
-				chartData(data);
-				updateChart(data);
-				updateMenus();
-				updateLegend();
+	d3.json("/WeatherHistory/zone/" + _zone + "/year/" + year + "/json")
+			.header("Cache-Control", "max-age=3600, min-fresh=0").get(
+					function(error, data) {
+						_data = data;
+						chartData(data);
+						updateChart(data);
+						updateMenus();
+						updateLegend();
 
-				// Render axes
-				d3.select('svg g.chart').append("g").attr('transform',
-						'translate(0, 630)').attr('id', 'xAxis')
-						.call(makeXAxis);
+						// Render axes
+						d3.select('svg g.chart').append("g").attr('transform',
+								'translate(0, 630)').attr('id', 'xAxis').call(
+								makeXAxis);
 
-				d3.select('svg g.chart').append("g").attr('id', 'yAxis').attr(
-						'transform', 'translate(-10, 0)').call(makeYAxis);
+						d3.select('svg g.chart').append("g")
+								.attr('id', 'yAxis').attr('transform',
+										'translate(-10, 0)').call(makeYAxis);
 
-			});
+					});
 }
 
 function chartData(data) {
@@ -300,6 +302,8 @@ function updateChart(data) {
 						}
 					}).attr('fill', function(d) {
 				return _color(d[pointCategory]);
+			}).attr('title', function(d) {
+				return d.demand + ' MW at ' + new Date(d.dateDst);
 			});
 
 	// Also update the axes
