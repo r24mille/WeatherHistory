@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -74,7 +75,8 @@ public class ZonalDemandController implements ApplicationContextAware {
 
 		// Attempt to mark JSON content cacheable to client since it doesn't change often
 		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("cache-control", "public, max-age=3600");
+		responseHeaders.setCacheControl("public, max-age=3600");
+		responseHeaders.setExpires(DateTime.now().plusHours(1).getMillis());
 		
 		return new ResponseEntity<List<ZonalDemandAndWeather>>(zonalDemandAndWeathers, responseHeaders, HttpStatus.CREATED);
 	}
