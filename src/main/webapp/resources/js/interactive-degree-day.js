@@ -63,9 +63,8 @@ function initChart(zone, year) {
 	weekendFilterOptions = [ "true", "false" ];
 	dayFilterOptions = [ "Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday" ];
-	hourFilterOptions = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-			10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-			21, 22, 23 ];
+	hourFilterOptions = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+			16, 17, 18, 19, 20, 21, 22, 23 ];
 
 	// Map all category values so that color/legend remains consistent
 	_categoryValueMap["timeOfUseRate"] = rateFilterOptions;
@@ -75,8 +74,8 @@ function initChart(zone, year) {
 	_categoryValueMap["wallHourNum"] = hourFilterOptions;
 
 	// Initialize all filters to be selected
-	selectedFilters = [].concat(dayFilterOptions, hourFilterOptions, seasonFilterOptions,
-			rateFilterOptions);
+	selectedFilters = [].concat(dayFilterOptions, hourFilterOptions,
+			seasonFilterOptions, rateFilterOptions);
 	// Verbose descriptions of axis and category options
 	descriptions = {
 		"tempMetric" : "Outdoor Temperature (Celsius)",
@@ -85,7 +84,7 @@ function initChart(zone, year) {
 		"timeOfUseSeason" : "Time-of-Use seasons",
 		"weekend" : "Weekend",
 		"dayOfWeek" : "Day of week",
-		"wallHourNum" : "Hour of day", 
+		"wallHourNum" : "Hour of day",
 		"demand" : "Electricity Demand (MW)",
 		"true" : "Weekend",
 		"false" : "Weekday",
@@ -319,7 +318,8 @@ function chartData(data) {
 // RENDERING FUNCTIONS
 function updateChart(data) {
 	updateScales(data);
-	d3.select('svg g.chart').selectAll('circle').attr('cx', function(d) {
+	d3.select('svg g.chart').selectAll('circle').transition().duration(1250)
+			.ease('quad-out').attr('cx', function(d) {
 				if (isNaN(d[xAxis])) {
 					return d3.select(this).attr('cx');
 				} else {
@@ -349,9 +349,11 @@ function updateChart(data) {
 						}
 					}).attr('fill', function(d) {
 				return _color(d[pointCategory]);
-			}).attr('title', function(d) {
-				return d.demand + ' MW at ' + new Date(d.dateDst);
-			});
+			}).style("opacity", 0.5);
+	// Removing date/MW title for now
+	// .attr('title', function(d) {
+	// return d.demand + ' MW at ' + new Date(d.dateDst);
+	// });
 
 	// Also update the axes
 	d3.select('#xAxis').transition().call(makeXAxis);
