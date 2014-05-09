@@ -58,7 +58,8 @@
 			<ul id="zone-menu">
 				<c:forEach items="${zoneStrings}" var="loopZone">
 					<c:choose>
-						<c:when test="${fn:toLowerCase(loopZone) == fn:toLowerCase(zoneString)}">
+						<c:when
+							test="${fn:toLowerCase(loopZone) == fn:toLowerCase(zoneString)}">
 							<li class="selected">${loopZone}</li>
 						</c:when>
 						<c:otherwise>
@@ -72,8 +73,9 @@
 						function() {
 							$("#zone-menu li").removeClass("selected");
 							$("#demand-zone").text($(this).text());
-							chartJSON($(this).text(), $("#year-slider").slider(
-									"value"));
+							jsonUrl = zonalJsonUrl($(this).text(), $(
+									"#year-slider").slider("value"));
+							chartJSON(jsonUrl);
 							$(this).addClass("selected");
 						});
 			</script>
