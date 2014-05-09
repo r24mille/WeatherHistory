@@ -8,7 +8,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>Transmission Zone Demand</title>
+<title>Local Distribution Company Demand</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width">
 
@@ -30,8 +30,7 @@
 	<div id="wrapper">
 		<div id="title">
 			<h1>
-				<span id="demand-zone">${zoneString}</span> Zone, <span
-					class="demand-year"></span>
+				Local Distribution Company
 			</h1>
 		</div>
 
@@ -54,40 +53,12 @@
 				<ul id="rate-filter-menu">
 				</ul>
 			</div>
-			<h3>Transmission Zone</h3>
-			<ul id="zone-menu">
-				<c:forEach items="${zoneStrings}" var="loopZone">
-					<c:choose>
-						<c:when test="${fn:toLowerCase(loopZone) == fn:toLowerCase(zoneString)}">
-							<li class="selected">${loopZone}</li>
-						</c:when>
-						<c:otherwise>
-							<li>${loopZone}</li>
-						</c:otherwise>
-					</c:choose>
-				</c:forEach>
-			</ul>
-			<script>
-				$("#zone-menu li").click(
-						function() {
-							$("#zone-menu li").removeClass("selected");
-							$("#demand-zone").text($(this).text());
-							chartJSON($(this).text(), $("#year-slider").slider(
-									"value"));
-							$(this).addClass("selected");
-						});
-			</script>
 		</div>
 
 		<div id="chart"></div>
-		<h2>
-			Pick a year: <span class="demand-year"></span>
-		</h2>
-		<div id="year-slider"></div>
 	</div>
 	<script>
-		initSlider("${zoneString}");
-		initZonalChart("${zoneString}", 2013);
+		initLdcChart();
 	</script>
 </body>
 </html>

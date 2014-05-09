@@ -8,6 +8,18 @@
 	<bean id="apiKey" class="java.lang.String">
 		<constructor-arg value="your_weather_underground_api_key" />
 	</bean>
+	
+	<bean id="forecastIoApiKey" class="java.lang.String">
+		<constructor-arg value="your_forecast_io_api_key" />
+	</bean>
+	
+	<bean id="epcDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://www.example.com:3306" />
+		<property name="username" value="your_username" />
+		<property name="password" value="your_password" />
+	</bean>
 
 	<bean id="iss4eDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">

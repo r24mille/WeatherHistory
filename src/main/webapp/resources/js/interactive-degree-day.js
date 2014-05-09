@@ -33,8 +33,6 @@ function getBounds(d, paddingFactor) {
  * Initialize the JQuery-UI slider
  */
 function initSlider(zone) {
-	_zone = zone;
-
 	$("#year-slider").slider({
 		range : "min",
 		value : 2013,
@@ -42,13 +40,31 @@ function initSlider(zone) {
 		max : 2013,
 		slide : function(event, ui) {
 			$(".demand-year").text(ui.value);
-			chartJSON(_zone, ui.value);
+			jsonUrl = zonalJsonUrl(zone, ui.value);
+			chartJSON(jsonUrl);
 		}
 	});
 	$(".demand-year").text($("#year-slider").slider("value"));
 }
 
-function initChart(zone, year) {
+function initLdcChart() {
+	// Generic init
+	initChart();
+	
+	// Chart zonal data
+	chartJSON("/WeatherHistory/ldc/json");
+}
+
+function initZonalChart(zone, year) {
+	// Generic init
+	initChart();
+	
+	// Chart zonal data
+	jsonUrl = zonalJsonUrl(zone, year);
+	chartJSON(jsonUrl);
+}
+
+function initChart() {
 	// Set up default x-axis, y-axis, and color categories
 	xAxis = "tempMetric";
 	yAxis = "demand";
@@ -254,16 +270,11 @@ function initChart(zone, year) {
 		'text-anchor' : 'middle'
 	}).text(yAxis);
 	d3.select('#yLabel').text(descriptions[yAxis]);
-
-	// Render points
-	chartJSON(zone, year);
 }
 
-function chartJSON(zone, year) {
-	_zone = zone;
-
+function chartJSON(jsonUrl) {
 	// Make call for JSON data
-	d3.json("/WeatherHistory/zone/" + _zone + "/year/" + year + "/json")
+	d3.json(jsonUrl)
 			.header("Cache-Control", "max-age=3600, min-fresh=0").get(
 					function(error, data) {
 						_data = data;
@@ -409,4 +420,9 @@ function updateMenus() {
 	d3.select('#filter-menu').selectAll('li').classed('selected', function(d) {
 		return _.contains(selectedFilters, d);
 	});
+}
+
+function zonalJsonUrl(zone, year) {
+	_zone = zone;
+	return "/WeatherHistory/zone/" + _zone + "/year/" + year + "/json";
 }
