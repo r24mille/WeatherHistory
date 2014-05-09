@@ -34,7 +34,7 @@ public class ZonalDemandSummary {
 		}
 
 		this.timeOfUseSeason = TimeOfUseSeason.valueOfDateTime(dateTimeDst);
-		this.timeOfUseRate = TimeOfUseRate.valueOfHour(this.wallHourNum,
+		this.timeOfUseRate = TimeOfUseRate.valueOfDateTime(dateTimeDst,
 				this.timeOfUseSeason, this.weekend);
 
 		this.zonalDemands = zonalDemands;

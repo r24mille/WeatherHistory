@@ -31,7 +31,7 @@ public class LdcDemand implements Demand {
 		}
 
 		this.timeOfUseSeason = TimeOfUseSeason.valueOfDateTime(dateTimeDst);
-		this.timeOfUseRate = TimeOfUseRate.valueOfHour(this.wallHourNum,
+		this.timeOfUseRate = TimeOfUseRate.valueOfDateTime(dateTimeDst,
 				this.timeOfUseSeason, this.weekend);
 
 		this.dayOfWeek = dateTimeDst.dayOfWeek().getAsText();
