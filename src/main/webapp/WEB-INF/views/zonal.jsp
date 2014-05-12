@@ -36,25 +36,25 @@
 		</div>
 
 		<div id="menu">
-			<h3>Independent Variable</h3>
+			<h3 class="toggle toggle_open">Independent Variable</h3>
 			<ul id="x-axis-menu"></ul>
-			<h3>Color Category</h3>
+			<h3 class="toggle toggle_open">Color Category</h3>
 			<ul id="category-menu"></ul>
 			<div id="filter-menu">
-				<h3>Filter Days</h3>
+				<h3 class="toggle toggle_open">Filter Days</h3>
 				<ul id="day-filter-menu">
 				</ul>
-				<h3>Filter Hours</h3>
-				<ul id="hour-filter-menu">
+				<h3 class="toggle toggle_closed">Filter Hours</h3>
+				<ul id="hour-filter-menu" style="display: none;">
 				</ul>
-				<h3>Filter Seasons</h3>
+				<h3 class="toggle toggle_open">Filter Seasons</h3>
 				<ul id="season-filter-menu">
 				</ul>
-				<h3>Filter Rates</h3>
+				<h3 class="toggle toggle_open">Filter Rates</h3>
 				<ul id="rate-filter-menu">
 				</ul>
 			</div>
-			<h3>Transmission Zone</h3>
+			<h3 class="toggle toggle_open">Transmission Zone</h3>
 			<ul id="zone-menu">
 				<c:forEach items="${zoneStrings}" var="loopZone">
 					<c:choose>

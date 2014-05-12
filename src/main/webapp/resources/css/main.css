@@ -38,14 +38,28 @@ div#menu {
 }
 
 div#menu h3 {
-	margin: 0px;
-	padding: 0px;
+	margin: 5px 0px 0px 0px;
+	padding: 2px 0px 2px 10px;
 	border-bottom: 1px dashed black;
+	font-size: 1.3em;
+	line-height: 1.3em;
+}
+
+div#menu h3.toggle {
+	cursor: pointer;
+}
+
+div#menu h3.toggle_open {
+	background: url("../images/arrow_down_icon.png") right no-repeat;
+}
+
+div#menu h3.toggle_closed {
+	background: url("../images/arrow_up_icon.png") right no-repeat;
 }
 
 div#menu ul {
 	list-style: none;
-	margin: 0px 0px 20px 0px;
+	margin: 5px 0px 20px 0px;
 	padding: 0px;
 }
 
