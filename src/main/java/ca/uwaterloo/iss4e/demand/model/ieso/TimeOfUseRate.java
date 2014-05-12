@@ -36,7 +36,6 @@ public enum TimeOfUseRate {
 		DateTime touHourAdjust = dateTimeFormatter
 				.parseDateTime("2011-05-01 00:00:00");
 
-		
 		if (dateTimeDst.isBefore(rppStart)) {
 			// Everything prior to April 1, 2005 is "off-peak"
 			return OFF_PEAK;

@@ -2,10 +2,11 @@
  * Initialize the one-time run elements of the D3 chart
  */
 var xAxis, yAxis, pointCategory;
-var xAxisOptions, categoryOptions, dayFilterOptions, seasonFilterOptions, rateFilterOptions;
+var xAxisOptions, dayFilterOptions, seasonFilterOptions, rateFilterOptions;
 var selectedFilters;
+var _categoryOptions = new Array();
 var _categoryValueMap = new Array();
-var descriptions;
+var _descriptions = new Array();
 var _zone, _data, svg, _color;
 
 function getBounds(d, paddingFactor) {
@@ -48,9 +49,15 @@ function initSlider(zone) {
 }
 
 function initLdcChart() {
+	// Time-of-Use billing active yes or no categories
+	touBillingActiveOptions = [ "true", "false" ];
+	_categoryValueMap["touBillingActive"] = touBillingActiveOptions;
+	_descriptions["touBillingActive"] = "Time-of-Use billing active";
+	_categoryOptions = [ "touBillingActive" ];
+
 	// Generic init
 	initChart();
-	
+
 	// Chart zonal data
 	chartJSON("/WeatherHistory/ldc/json");
 }
@@ -58,22 +65,17 @@ function initLdcChart() {
 function initZonalChart(zone, year) {
 	// Generic init
 	initChart();
-	
+
 	// Chart zonal data
 	jsonUrl = zonalJsonUrl(zone, year);
 	chartJSON(jsonUrl);
 }
 
 function initChart() {
-	// Set up default x-axis, y-axis, and color categories
-	xAxis = "tempMetric";
-	yAxis = "demand";
-	pointCategory = "timeOfUseRate";
-
 	// Define all available x-axis options and color categories
 	xAxisOptions = [ "tempMetric", "wallHourNum" ];
-	categoryOptions = [ "timeOfUseRate", "timeOfUseSeason", "weekend",
-			"dayOfWeek", "wallHourNum" ];
+	_categoryOptions = _categoryOptions.concat([ "timeOfUseRate",
+			"timeOfUseSeason", "weekend", "dayOfWeek", "wallHourNum" ]);
 	rateFilterOptions = [ "OFF_PEAK", "MID_PEAK", "ON_PEAK" ];
 	seasonFilterOptions = [ "SUMMER", "WINTER" ];
 	weekendFilterOptions = [ "true", "false" ];
@@ -93,54 +95,57 @@ function initChart() {
 	selectedFilters = [].concat(dayFilterOptions, hourFilterOptions,
 			seasonFilterOptions, rateFilterOptions);
 	// Verbose descriptions of axis and category options
-	descriptions = {
-		"tempMetric" : "Outdoor Temperature (Celsius)",
-		"wallHourNum" : "Hour-of-Day (hours 0-23)",
-		"timeOfUseRate" : "Time-of-Use daily price periods",
-		"timeOfUseSeason" : "Time-of-Use seasons",
-		"weekend" : "Weekend",
-		"dayOfWeek" : "Day of week",
-		"wallHourNum" : "Hour of day",
-		"demand" : "Electricity Demand (MW)",
-		"true" : "Weekend",
-		"false" : "Weekday",
-		"ON_PEAK" : "On-peak hours",
-		"OFF_PEAK" : "Off-peak hours",
-		"MID_PEAK" : "Mid-peak hours",
-		"SUMMER" : "Summer",
-		"WINTER" : "Winter",
-		"Sunday" : "Sunday",
-		"Monday" : "Monday",
-		"Tuesday" : "Tuesday",
-		"Wednesday" : "Wednesday",
-		"Thursday" : "Thursday",
-		"Friday" : "Friday",
-		"Saturday" : "Saturday",
-		0 : "00:00 - 01:00",
-		1 : "01:00 - 02:00",
-		2 : "02:00 - 03:00",
-		3 : "03:00 - 04:00",
-		4 : "04:00 - 05:00",
-		5 : "05:00 - 06:00",
-		6 : "06:00 - 07:00",
-		7 : "07:00 - 08:00",
-		8 : "08:00 - 09:00",
-		9 : "09:00 - 10:00",
-		10 : "10:00 - 11:00",
-		11 : "11:00 - 12:00",
-		12 : "12:00 - 13:00",
-		13 : "13:00 - 14:00",
-		14 : "14:00 - 15:00",
-		15 : "15:00 - 16:00",
-		16 : "16:00 - 17:00",
-		17 : "17:00 - 18:00",
-		18 : "18:00 - 19:00",
-		19 : "19:00 - 20:00",
-		20 : "20:00 - 21:00",
-		21 : "21:00 - 22:00",
-		22 : "22:00 - 23:00",
-		23 : "23:00 - 00:00"
-	};
+	_descriptions["tempMetric"] = "Outdoor Temperature (Celsius)";
+	_descriptions["wallHourNum"] = "Hour-of-Day (hours 0-23)";
+	_descriptions["timeOfUseRate"] = "Time-of-Use daily price periods";
+	_descriptions["timeOfUseSeason"] = "Time-of-Use seasons";
+	_descriptions["weekend"] = "Weekend";
+	_descriptions["dayOfWeek"] = "Day of week";
+	_descriptions["wallHourNum"] = "Hour of day";
+	_descriptions["demand"] = "Electricity Demand (MW)";
+	_descriptions["true"] = "Yes";
+	_descriptions["false"] = "No";
+	_descriptions["ON_PEAK"] = "On-peak hours";
+	_descriptions["OFF_PEAK"] = "Off-peak hours";
+	_descriptions["MID_PEAK"] = "Mid-peak hours";
+	_descriptions["SUMMER"] = "Summer";
+	_descriptions["WINTER"] = "Winter";
+	_descriptions["Sunday"] = "Sunday";
+	_descriptions["Monday"] = "Monday";
+	_descriptions["Tuesday"] = "Tuesday";
+	_descriptions["Wednesday"] = "Wednesday";
+	_descriptions["Thursday"] = "Thursday";
+	_descriptions["Friday"] = "Friday";
+	_descriptions["Saturday"] = "Saturday";
+	_descriptions[0] = "00:00 - 01:00";
+	_descriptions[1] = "01:00 - 02:00";
+	_descriptions[2] = "02:00 - 03:00";
+	_descriptions[3] = "03:00 - 04:00";
+	_descriptions[4] = "04:00 - 05:00";
+	_descriptions[5] = "05:00 - 06:00";
+	_descriptions[6] = "06:00 - 07:00";
+	_descriptions[7] = "07:00 - 08:00";
+	_descriptions[8] = "08:00 - 09:00";
+	_descriptions[9] = "09:00 - 10:00";
+	_descriptions[10] = "10:00 - 11:00";
+	_descriptions[11] = "11:00 - 12:00";
+	_descriptions[12] = "12:00 - 13:00";
+	_descriptions[13] = "13:00 - 14:00";
+	_descriptions[14] = "14:00 - 15:00";
+	_descriptions[15] = "15:00 - 16:00";
+	_descriptions[16] = "16:00 - 17:00";
+	_descriptions[17] = "17:00 - 18:00";
+	_descriptions[18] = "18:00 - 19:00";
+	_descriptions[19] = "19:00 - 20:00";
+	_descriptions[20] = "20:00 - 21:00";
+	_descriptions[21] = "21:00 - 22:00";
+	_descriptions[22] = "22:00 - 23:00";
+	_descriptions[23] = "23:00 - 00:00";
+	
+	// Set up default x-axis, y-axis, and color categories
+	xAxis = xAxisOptions[0];
+	yAxis = "demand";
+	pointCategory = _categoryOptions[0];
 
 	// Initialize all colors for category
 	_color = d3.scale.category10();
@@ -153,24 +158,33 @@ function initChart() {
 			700);
 	svg.append('g').classed('chart', true).attr('transform',
 			'translate(90, -100)');
+	
+	// Add toggle listeners
+	$(".toggle").each(function() {
+		$(this).click( function() {
+			$(this).toggleClass("toggle_open");
+			$(this).toggleClass("toggle_closed");
+			$(this).next("ul").toggle("blind", 500);
+		});
+	});
 
 	// Build menus
 	d3.select('#x-axis-menu').selectAll('li').data(xAxisOptions).enter()
 			.append('li').text(function(d) {
-				return descriptions[d];
+				return _descriptions[d];
 			}).classed('selected', function(d) {
 				return d === xAxis;
 			}).on('click', function(d) {
 				xAxis = d;
-				d3.select('#xLabel').text(descriptions[xAxis]);
+				d3.select('#xLabel').text(_descriptions[xAxis]);
 
 				updateChart(_data);
 				updateMenus();
 			});
 
-	d3.select('#category-menu').selectAll('li').data(categoryOptions).enter()
+	d3.select('#category-menu').selectAll('li').data(_categoryOptions).enter()
 			.append('li').text(function(d) {
-				return descriptions[d];
+				return _descriptions[d];
 			}).classed('selected', function(d) {
 				return d === pointCategory;
 			}).on('click', function(d) {
@@ -206,7 +220,7 @@ function initChart() {
 
 	d3.select('#hour-filter-menu').selectAll('li').data(hourFilterOptions)
 			.enter().append('li').text(function(d) {
-				return descriptions[d];
+				return _descriptions[d];
 			}).classed('selected', function(d) {
 				return _.contains(selectedFilters, d);
 			}).on('click', function(d) {
@@ -223,7 +237,7 @@ function initChart() {
 
 	d3.select('#season-filter-menu').selectAll('li').data(seasonFilterOptions)
 			.enter().append('li').text(function(d) {
-				return descriptions[d];
+				return _descriptions[d];
 			}).classed('selected', function(d) {
 				return _.contains(selectedFilters, d);
 			}).on('click', function(d) {
@@ -240,7 +254,7 @@ function initChart() {
 
 	d3.select('#rate-filter-menu').selectAll('li').data(rateFilterOptions)
 			.enter().append('li').text(function(d) {
-				return descriptions[d];
+				return _descriptions[d];
 			}).classed('selected', function(d) {
 				return _.contains(selectedFilters, d);
 			}).on('click', function(d) {
@@ -261,38 +275,36 @@ function initChart() {
 		'x' : 400,
 		'y' : 670,
 		'text-anchor' : 'middle'
-	}).text(descriptions[xAxis]);
-	d3.select('#xLabel').text(descriptions[xAxis]);
+	}).text(_descriptions[xAxis]);
+	d3.select('#xLabel').text(_descriptions[xAxis]);
 
 	d3.select('svg g.chart').append('text').attr('transform',
 			'translate(-60, 330)rotate(-90)').attr({
 		'id' : 'yLabel',
 		'text-anchor' : 'middle'
 	}).text(yAxis);
-	d3.select('#yLabel').text(descriptions[yAxis]);
+	d3.select('#yLabel').text(_descriptions[yAxis]);
 }
 
 function chartJSON(jsonUrl) {
 	// Make call for JSON data
-	d3.json(jsonUrl)
-			.header("Cache-Control", "max-age=3600, min-fresh=0").get(
-					function(error, data) {
-						_data = data;
-						chartData(data);
-						updateChart(data);
-						updateMenus();
-						updateLegend();
+	d3.json(jsonUrl).header("Cache-Control", "max-age=3600, min-fresh=0").get(
+			function(error, data) {
+				_data = data;
+				chartData(data);
+				updateChart(data);
+				updateMenus();
+				updateLegend();
 
-						// Render axes
-						d3.select('svg g.chart').append("g").attr('transform',
-								'translate(0, 630)').attr('id', 'xAxis').call(
-								makeXAxis);
+				// Render axes
+				d3.select('svg g.chart').append("g").attr('transform',
+						'translate(0, 630)').attr('id', 'xAxis')
+						.call(makeXAxis);
 
-						d3.select('svg g.chart').append("g")
-								.attr('id', 'yAxis').attr('transform',
-										'translate(-10, 0)').call(makeYAxis);
+				d3.select('svg g.chart').append("g").attr('id', 'yAxis').attr(
+						'transform', 'translate(-10, 0)').call(makeYAxis);
 
-					});
+			});
 }
 
 function chartData(data) {
@@ -360,7 +372,7 @@ function updateChart(data) {
 						}
 					}).attr('fill', function(d) {
 				return _color(d[pointCategory]);
-			}).style("opacity", 0.5);
+			}).style("opacity", 0.25);
 	// Removing date/MW title for now
 	// .attr('title', function(d) {
 	// return d.demand + ' MW at ' + new Date(d.dateDst);
@@ -386,7 +398,7 @@ function updateLegend() {
 
 	legend.append("text").attr("x", 1000 - 24).attr("y", 9).attr("dy", ".35em")
 			.style("text-anchor", "end").text(function(d) {
-				return descriptions[d];
+				return _descriptions[d];
 			});
 }
 

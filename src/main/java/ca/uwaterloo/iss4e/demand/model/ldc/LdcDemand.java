@@ -3,14 +3,22 @@ package ca.uwaterloo.iss4e.demand.model.ldc;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import ca.uwaterloo.iss4e.demand.model.Demand;
 import ca.uwaterloo.iss4e.demand.model.ieso.TimeOfUseRate;
 import ca.uwaterloo.iss4e.demand.model.ieso.TimeOfUseSeason;
 
 public class LdcDemand implements Demand {
+	private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat
+			.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	public static final DateTime TOU_BILLING_START = dateTimeFormatter
+			.parseDateTime("2011-11-01 00:00:00 -0400"); // Nov 1, 2011 is EDT
+
 	private int wallHourNum;
 	private double demand;
+	private boolean touBillingActive;
 	private boolean weekend;
 	private Date dateDst;
 	private TimeOfUseRate timeOfUseRate;
@@ -28,6 +36,12 @@ public class LdcDemand implements Demand {
 			this.weekend = true;
 		} else {
 			this.weekend = false;
+		}
+
+		if (dateTimeDst.isBefore(TOU_BILLING_START)) {
+			this.touBillingActive = false;
+		} else {
+			this.touBillingActive = true;
 		}
 
 		this.timeOfUseSeason = TimeOfUseSeason.valueOfDateTime(dateTimeDst);
@@ -83,6 +97,14 @@ public class LdcDemand implements Demand {
 
 	public void setTimeOfUseSeason(TimeOfUseSeason timeOfUseSeason) {
 		this.timeOfUseSeason = timeOfUseSeason;
+	}
+
+	public boolean isTouBillingActive() {
+		return touBillingActive;
+	}
+
+	public void setTouBillingActive(boolean touBillingActive) {
+		this.touBillingActive = touBillingActive;
 	}
 
 	public String getDayOfWeek() {
