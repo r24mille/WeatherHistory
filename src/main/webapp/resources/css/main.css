@@ -49,10 +49,12 @@ div#menu h3.toggle {
 	cursor: pointer;
 }
 
+/* Creative Commons attribution to Jardson A. (http://thenounproject.com/term/arrow/8547/) */
 div#menu h3.toggle_open {
 	background: url("../images/arrow_down_icon.png") right no-repeat;
 }
 
+/* Creative Commons attribution to Jardson A. (http://thenounproject.com/term/arrow/8546/) */
 div#menu h3.toggle_closed {
 	background: url("../images/arrow_up_icon.png") right no-repeat;
 }
