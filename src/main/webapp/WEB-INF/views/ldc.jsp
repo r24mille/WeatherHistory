@@ -40,6 +40,9 @@
 			<h3 class="toggle toggle_open">Color Category</h3>
 			<ul id="category-menu"></ul>
 			<div id="filter-menu">
+				<h3 class="toggle toggle_open">Filter TOU Billing</h3>
+				<ul id="touactive-filter-menu">
+				</ul>
 				<h3 class="toggle toggle_open">Filter Days</h3>
 				<ul id="day-filter-menu">
 				</ul>

@@ -25,7 +25,7 @@ public class ForecastIoBuildIesoHistory {
 	static WundergroundObservationDAO wundergroundObservationDAO = (WundergroundObservationDAO) context
 			.getBean("wundergroundObservationDAO");
 	static String forecastIoApiKey = (String) context
-			.getBean("forecastIoApiKey1");
+			.getBean("forecastIoApiKey4");
 	static int FORECAST_IO_LIMIT = 1000;
 	// Configure these each run
 	static TransmissionZone transmissionZone = TransmissionZone.EAST;

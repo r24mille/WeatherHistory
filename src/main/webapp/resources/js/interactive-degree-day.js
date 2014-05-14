@@ -3,7 +3,7 @@
  */
 var xAxis, yAxis, pointCategory;
 var xAxisOptions, dayFilterOptions, seasonFilterOptions, rateFilterOptions;
-var selectedFilters;
+var _selectedFilters = new Array();
 var _categoryOptions = new Array();
 var _categoryValueMap = new Array();
 var _descriptions = new Array();
@@ -50,10 +50,33 @@ function initSlider(zone) {
 
 function initLdcChart() {
 	// Time-of-Use billing active yes or no categories
-	touBillingActiveOptions = [ "true", "false" ];
+	touBillingActiveOptions = [ true, false ];
 	_categoryValueMap["touBillingActive"] = touBillingActiveOptions;
 	_descriptions["touBillingActive"] = "Time-of-Use billing active";
 	_categoryOptions = [ "touBillingActive" ];
+
+	_selectedFilters = touBillingActiveOptions;
+
+	d3.select('#touactive-filter-menu').selectAll('li').data(
+			touBillingActiveOptions).enter().append('li').text(function(d) {
+		if (d) {
+			return "Yes (Post-TOU)";
+		} else {
+			return "No (Pre-TOU)";
+		}
+	}).classed('selected', function(d) {
+		return _.contains(_selectedFilters, d);
+	}).on('click', function(d) {
+		// Toggle filters
+		if (_.contains(_selectedFilters, d)) {
+			var filterIndex = _.indexOf(_selectedFilters, d);
+			_selectedFilters.splice(filterIndex, 1);
+		} else {
+			_selectedFilters.push(d);
+		}
+		updateChart(_data);
+		updateMenus();
+	});
 
 	// Generic init
 	initChart();
@@ -92,8 +115,8 @@ function initChart() {
 	_categoryValueMap["wallHourNum"] = hourFilterOptions;
 
 	// Initialize all filters to be selected
-	selectedFilters = [].concat(dayFilterOptions, hourFilterOptions,
-			seasonFilterOptions, rateFilterOptions);
+	_selectedFilters = _selectedFilters.concat(dayFilterOptions,
+			hourFilterOptions, seasonFilterOptions, rateFilterOptions);
 	// Verbose descriptions of axis and category options
 	_descriptions["tempMetric"] = "Outdoor Temperature (Celsius)";
 	_descriptions["wallHourNum"] = "Hour-of-Day (hours 0-23)";
@@ -141,7 +164,7 @@ function initChart() {
 	_descriptions[21] = "21:00 - 22:00";
 	_descriptions[22] = "22:00 - 23:00";
 	_descriptions[23] = "23:00 - 00:00";
-	
+
 	// Set up default x-axis, y-axis, and color categories
 	xAxis = xAxisOptions[0];
 	yAxis = "demand";
@@ -158,10 +181,10 @@ function initChart() {
 			700);
 	svg.append('g').classed('chart', true).attr('transform',
 			'translate(90, -100)');
-	
+
 	// Add toggle listeners
 	$(".toggle").each(function() {
-		$(this).click( function() {
+		$(this).click(function() {
 			$(this).toggleClass("toggle_open");
 			$(this).toggleClass("toggle_closed");
 			$(this).next("ul").toggle("blind", 500);
@@ -205,14 +228,14 @@ function initChart() {
 			.enter().append('li').text(function(d) {
 				return d;
 			}).classed('selected', function(d) {
-				return _.contains(selectedFilters, d);
+				return _.contains(_selectedFilters, d);
 			}).on('click', function(d) {
 				// Toggle filters
-				if (_.contains(selectedFilters, d)) {
-					var filterIndex = _.indexOf(selectedFilters, d);
-					selectedFilters.splice(filterIndex, 1);
+				if (_.contains(_selectedFilters, d)) {
+					var filterIndex = _.indexOf(_selectedFilters, d);
+					_selectedFilters.splice(filterIndex, 1);
 				} else {
-					selectedFilters.push(d);
+					_selectedFilters.push(d);
 				}
 				updateChart(_data);
 				updateMenus();
@@ -222,14 +245,14 @@ function initChart() {
 			.enter().append('li').text(function(d) {
 				return _descriptions[d];
 			}).classed('selected', function(d) {
-				return _.contains(selectedFilters, d);
+				return _.contains(_selectedFilters, d);
 			}).on('click', function(d) {
 				// Toggle filters
-				if (_.contains(selectedFilters, d)) {
-					var filterIndex = _.indexOf(selectedFilters, d);
-					selectedFilters.splice(filterIndex, 1);
+				if (_.contains(_selectedFilters, d)) {
+					var filterIndex = _.indexOf(_selectedFilters, d);
+					_selectedFilters.splice(filterIndex, 1);
 				} else {
-					selectedFilters.push(d);
+					_selectedFilters.push(d);
 				}
 				updateChart(_data);
 				updateMenus();
@@ -239,14 +262,14 @@ function initChart() {
 			.enter().append('li').text(function(d) {
 				return _descriptions[d];
 			}).classed('selected', function(d) {
-				return _.contains(selectedFilters, d);
+				return _.contains(_selectedFilters, d);
 			}).on('click', function(d) {
 				// Toggle filters
-				if (_.contains(selectedFilters, d)) {
-					var filterIndex = _.indexOf(selectedFilters, d);
-					selectedFilters.splice(filterIndex, 1);
+				if (_.contains(_selectedFilters, d)) {
+					var filterIndex = _.indexOf(_selectedFilters, d);
+					_selectedFilters.splice(filterIndex, 1);
 				} else {
-					selectedFilters.push(d);
+					_selectedFilters.push(d);
 				}
 				updateChart(_data);
 				updateMenus();
@@ -256,14 +279,14 @@ function initChart() {
 			.enter().append('li').text(function(d) {
 				return _descriptions[d];
 			}).classed('selected', function(d) {
-				return _.contains(selectedFilters, d);
+				return _.contains(_selectedFilters, d);
 			}).on('click', function(d) {
 				// Toggle filters
-				if (_.contains(selectedFilters, d)) {
-					var filterIndex = _.indexOf(selectedFilters, d);
-					selectedFilters.splice(filterIndex, 1);
+				if (_.contains(_selectedFilters, d)) {
+					var filterIndex = _.indexOf(_selectedFilters, d);
+					_selectedFilters.splice(filterIndex, 1);
 				} else {
-					selectedFilters.push(d);
+					_selectedFilters.push(d);
 				}
 				updateChart(_data);
 				updateMenus();
@@ -359,20 +382,23 @@ function updateChart(data) {
 					function(d) {
 						if (isNaN(d[xAxis])
 								|| isNaN(d[yAxis])
-								|| !_.contains(selectedFilters, d["dayOfWeek"])
-								|| !_.contains(selectedFilters,
+								|| !_.contains(_selectedFilters,
+										d["dayOfWeek"])
+								|| !_.contains(_selectedFilters,
 										d["timeOfUseSeason"])
-								|| !_.contains(selectedFilters,
+								|| !_.contains(_selectedFilters,
 										d["timeOfUseRate"])
-								|| !_.contains(selectedFilters,
-										d["wallHourNum"])) {
+								|| !_.contains(_selectedFilters,
+										d["wallHourNum"])
+								|| !_.contains(_selectedFilters,
+										d["touBillingActive"])) {
 							return 0;
 						} else {
-							return 2;
+							return 1.75;
 						}
 					}).attr('fill', function(d) {
 				return _color(d[pointCategory]);
-			}).style("opacity", 0.25);
+			}).style("opacity", 0.5);
 	// Removing date/MW title for now
 	// .attr('title', function(d) {
 	// return d.demand + ' MW at ' + new Date(d.dateDst);
@@ -430,7 +456,7 @@ function updateMenus() {
 			});
 
 	d3.select('#filter-menu').selectAll('li').classed('selected', function(d) {
-		return _.contains(selectedFilters, d);
+		return _.contains(_selectedFilters, d);
 	});
 }
 
