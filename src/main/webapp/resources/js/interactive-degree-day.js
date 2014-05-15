@@ -390,8 +390,8 @@ function updateChart(data) {
 										d["timeOfUseRate"])
 								|| !_.contains(_selectedFilters,
 										d["wallHourNum"])
-								|| !_.contains(_selectedFilters,
-										d["touBillingActive"])) {
+								|| (d["touBillingActive"] != null && !_.contains(_selectedFilters,
+										d["touBillingActive"]))) {
 							return 0;
 						} else {
 							return 1.75;
